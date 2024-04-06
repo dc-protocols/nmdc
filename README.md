@@ -1,7 +1,7 @@
 # NMDC protocol documentation
 
-This repository contains the official NMDC specifications, formatted in http://www.methods.co.nz/asciidoc/
+This repository contains the official NMDC specifications, formatted in https://asciidoc3.org/userguide.html
 
-The HTML versions on the site were generated using version 8.2.6 with the command line:
+The HTML versions on the site were generated using AsciiDoc3 3.2.3 with the command line:
 
-asciidoc -a toc NMDC.txt
+asciidoc3 NMDC.txt
