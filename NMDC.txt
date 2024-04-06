@@ -1,6 +1,8 @@
 = NMDC Protocol
-Fredrik Ullner <ullner@gmail.com>
-version 1.3, March 2013
+:author: Aleksandr Zenkov
+:email: webmaster@feardc.net
+:revdate: 2024-04-06
+:revnumber: 1.4
 
 == Abstract
 Neo-Modus Direct Connect (NMDC) is a text protocol for a client-server network. The same protocol structure is used both for client-hub and client-client communication. This document is split into two parts; the first shows the structure of the protocol, while the second implements a specific system using this structure.
@@ -12,24 +14,31 @@ The protocol's basic outline was written by Jon Hess in 1998 for the NMDC client
 
 This document uses information from many sources, including but not limited to;
 
-* Ptokax Wiki http://wiki.ptokax.ch and http://wiki.ptokax.org
-* TeamFair wiki http://www.teamfair.info/wiki/
+* Ptokax wiki: http://wiki.ptokax.org
+* TeamFair wiki
 * The Nighthawk forum
-* Mutor protocol doc http://mutor.no-ip.com:413/protocol.htm
+* Mutor protocol docs
+* Verlihub NMDC section: https://www.te-home.net/?do=work&id=verlihub&page=nmdc
 
-This document was compiled by Fredrik Ullner.
+This document was compiled using AsciiDoc3 {asciidoc3-version} by {author}.
 
 == Version history
 The latest draft of the next version of this document as well as intermediate
-and older versions can be downloaded from
-$URL: https://nmdc.svn.sourceforge.net/svnroot/nmdc/trunk/NMDC.txt $. 
-This version corresponds to $Revision: 25 $.
+and older versions can be downloaded from https://github.com/dc-protocols/nmdc
 
 === Version 1.4
-UNRELEASED
+Fredrik Ullner <ullner@gmail>, 2013-12-20
 
 * Added $SetIcon extension
 * Added note on $ADCGet's use of ADC fields
+
+{author} <{email}>, {revdate}
+
+* Upgraded to AsciiDoc3
+* Removed inaccessible URLs
+* Added CTM2HUB in $Error
+* Added $SetLogo extension
+* Changed $HubINFO to support category and encoding parameters
 
 === Version 1.3
 Fredrik Ullner <ullner@gmail>, 2013-03-09
@@ -90,6 +99,7 @@ There are different types of routed messages:
 |Hub to Client
 |Hub to Hub
 |Hub to Hublist
+|Hub to Pinger
 |Pinger to Hub
 |=====
 
@@ -471,6 +481,18 @@ General purpose fail command. Implementations may use this command to signify fi
 Contexts: Client -> Hub, Client -> Hub -> Client, Client -> Client, Hub -> Client
 
 General purpose fail command. Implementations may use this command to signify files that are not available. $Failed is usually sent in response to a GetZBlock, UGetBlock and UGetZBlock.
+
+When this command is sent in context of hub to client, and message equals CTM2HUB, it means that client connection was made to a hub, and client must instantly stop trying to connect to address previously requested in CTM.
+
+Example client request:
+====
+ $ConnectToMe john 192.168.1.2:411|
+====
+
+Once client connects to 192.168.1.2:411 it receives $Error command:
+====
+ $Error CTM2HUB|
+====
 
 ==== $Search
  $Search ip:port search_string|
@@ -993,9 +1015,9 @@ Bot description can be any string, usually information regarding, and address of
 Add BotINFO to the $Supports to indicate support for this.
 
 ==== $HubINFO
- $HubINFO name$address:port$description$max_users$min_share$min_slots$max_hubs$hub_type$hubowner_login|
+ $HubINFO name$address:port$description$max_users$min_share$min_slots$max_hubs$hub_type$hubowner_login$hub_category$char_encoding|
  
-Contexts: Hub -> Client
+Contexts: Hub -> Pinger
 
 Hub name, address and description are the items which will be shown in the hublist (some hubs have multiple addresses and this helps to get primary address). Description changes often on some hubs so this helps with updating it.
 
@@ -1003,9 +1025,13 @@ Max users, min share, min slots and maximum number of open hubs for the client h
  
 Hub type gives information about the hub software and script which gave the information.
 
-Hubowner login is meant to help hubowners to edit information about their hub directly from the hublist portal It is usually an email address where the account/password information should be sent.
+Hubowner login is meant to help hubowners to edit information about their hub directly from the hublist portal. It is usually an email address where the account/password information should be sent.
 
-If the hub address is 127.0.0.1, the Hublist.org pinger will remove the hub from its database. (Or is supposed to.) 
+Hub category provides information about hub categorization such as Public, Private, Chatonly, Failover and Redirect.
+
+Character encoding provides information about character encoding currently used on hub, this helps a hublist to correctly display hub information such as correctly encoded hub name, description, when converting texts to UTF-8.
+
+If the hub address is 127.0.0.1, the Hublist.org pinger will remove the hub from its database. (Or is supposed to.)
 
 Add HubINFO to the $Supports to indicate support for this.
 
@@ -1333,7 +1359,7 @@ Escaping of dollar and pipe is necessary for the <command> in ''raw'' mode. The 
 
 Will add a menu separator (vertical bar) to the specified contexts (<context>). It is legal to add text (after the space) before the pipe, but it won''t be used (yet).
 
-====== Details: Raw
+===== Details: Raw
  $UserCommand 1 <context> <title>$<raw>|
 
 Will add a raw menu item with title <title> with command <raw>. This command must end with a &#124;, if not it should be discarded. The raw command may be used to specify multiple commands to be sent to the hub.
@@ -1739,14 +1765,31 @@ Examples:
 ==== Hub icon
  $SetIcon image_uri|
 
-This feature is used to indicate an icon to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://", "https://" or "www.".
+This feature is used to indicate an icon to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".
 
 Hubs that send this also support HubINFO.
 
+Hub softwares currently known to support this command: HeXHub, Verlihub
+
 Examples:
 ====
- $SetIcon www.example.com/images/myimage.ico|
+ $SetIcon https://www.example.com/images/myimage.ico|
  $SetIcon http://hub.example.org/img/image.ico|
+====
+
+==== Hub logo
+ $SetIcon image_uri|
+
+This feature is used to indicate a logotype to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".
+
+Hubs that send this also support HubINFO.
+
+Hub softwares currently known to support this command: HeXHub, Verlihub
+
+Examples:
+====
+ $SetLogo https://www.example.com/images/mylogo.jpg|
+ $SetLogo http://hub.example.org/img/logo.jpg|
 ====
 
 == Examples
