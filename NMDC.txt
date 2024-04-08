@@ -1,7 +1,7 @@
 = NMDC Protocol
 :author: Aleksandr Zenkov
 :email: webmaster@feardc.net
-:revdate: 2024-04-06
+:revdate: 2024-04-08
 :revnumber: 1.4
 
 == Abstract
@@ -39,6 +39,8 @@ Fredrik Ullner <ullner@gmail>, 2013-12-20
 * Added CTM2HUB in $Error
 * Added $SetLogo extension
 * Changed $HubINFO to support category and encoding parameters
+* Added TTHS extension
+* Added NickRule extension
 
 === Version 1.3
 Fredrik Ullner <ullner@gmail>, 2013-03-09
@@ -52,7 +54,7 @@ Fredrik Ullner <ullner@gmail>, 2013-03-09
 * Clarified (corrected) $UserIP and UserIP2
 * Added $Cancel and noted that $Canceled was only used briefly
 * Added QP extension
-* Added $Failover extension
+* Added FailOver extension
 * Added security considerations to the protocol
 * Added URI scheme description
 
@@ -482,17 +484,19 @@ Contexts: Client -> Hub, Client -> Hub -> Client, Client -> Client, Hub -> Clien
 
 General purpose fail command. Implementations may use this command to signify files that are not available. $Failed is usually sent in response to a GetZBlock, UGetBlock and UGetZBlock.
 
-When this command is sent in context of hub to client, and message equals CTM2HUB, it means that client connection was made to a hub, and client must instantly stop trying to connect to address previously requested in CTM.
+When this command is sent in context of hub to client, and message equals to 'CTM2HUB', it means that client connection was made to a hub, and client must instantly stop trying to connect to address previously requested in CTM.
 
 Example client request:
 ====
  $ConnectToMe john 192.168.1.2:411|
 ====
 
-Once client connects to 192.168.1.2:411 it receives $Error command:
+Once client connects to 192.168.1.2:411, it receives $Error command:
 ====
  $Error CTM2HUB|
 ====
+
+Hub softwares currently known to support this command: Verlihub
 
 ==== $Search
  $Search ip:port search_string|
@@ -579,17 +583,14 @@ Free_slots are the amount of available slots left. Total_slots are the total amo
 
 For files containing TTH, the hub_name parameter is replaced with TTH:hash
 
-Examples:
+Active result example:
 ==== 
-Active result:
-
  $SR User1 ponies.txt<0x05>437 3/4<0x05>Testhub (192.168.1.1:411)|
  $SR User5 images 0/4<0x05>Testhub (192.168.1.1:411)|
  $SR User6 pictures 0/4<0x05>Testhub (192.168.1.1)|
 ====
+Passive result example:
 ====
-Passive result:
-
  $SR User1 ponies.txt<0x05>437 3/4<0x05>Testhub (192.168.1.1:411)<0x05>User2|
  $SR User5 images 0/4<0x05>Testhub (192.168.1.1:411)<0x05>User2|
  $SR User6 pictures 0/4<0x05>Testhub (192.168.1.1)<0x05>User2|
@@ -1016,7 +1017,7 @@ Add BotINFO to the $Supports to indicate support for this.
 
 ==== $HubINFO
  $HubINFO name$address:port$description$max_users$min_share$min_slots$max_hubs$hub_type$hubowner_login$hub_category$char_encoding|
- 
+
 Contexts: Hub -> Pinger
 
 Hub name, address and description are the items which will be shown in the hublist (some hubs have multiple addresses and this helps to get primary address). Description changes often on some hubs so this helps with updating it.
@@ -1029,9 +1030,11 @@ Hubowner login is meant to help hubowners to edit information about their hub di
 
 Hub category provides information about hub categorization such as Public, Private, Chatonly, Failover and Redirect.
 
-Character encoding provides information about character encoding currently used on hub, this helps a hublist to correctly display hub information such as correctly encoded hub name, description, when converting texts to UTF-8.
+Character encoding provides information about character encoding currently used on hub, this helps a hublist to display correctly encoded hub information such as hub name, description, $MyINFOs, when converting texts to UTF-8.
 
-If the hub address is 127.0.0.1, the Hublist.org pinger will remove the hub from its database. (Or is supposed to.)
+Known encodings are: CP1250, CP1251, CP1252, CP1253, GB18030 and UTF-8.
+
+If the hub address is 127.0.0.1, a hublist pinger will/is supposed to remove the hub from its database.
 
 Add HubINFO to the $Supports to indicate support for this.
 
@@ -1376,8 +1379,8 @@ Will erase all commands that the hub has sent previously. This is for hubs/scrip
 
 Examples:
 ====
-$UserCommand 2 6 Kick$&#36;To: %[nick] From: %[mynick] &#36;<%[mynick]> You are being kicked====|&#36;Kick %[nick]&#124;|
-$UserCommand 255 1|
+ $UserCommand 2 6 Kick$&#36;To: %[nick] From: %[mynick] &#36;<%[mynick]> You are being kicked====|&#36;Kick %[nick]&#124;|
+ $UserCommand 255 1|
 ====
 
 === Extensions (features)
@@ -1601,8 +1604,49 @@ The naming scheme is valid in all types (i e also for getting TTH leaves)
 
 Add TTHF to the $Supports to indicate support for this.
 
-==== ZLIG
+==== TTHS
 
+Contexts: Client -> Hub, Hub -> Client
+
+TTHS stands for short TTH search.
+
+Example active search request:
+====
+ (new command)
+ $SA LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ 192.168.1.2:412|
+ (old command)
+ $Search 192.168.1.2:412 F?T?0?9?TTH:LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ|
+ (60 vs 76 bytes)
+====
+
+Example passive search request:
+====
+ (new command)
+ $SP LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ John|
+ (old command)
+ $Search Hub:John F?T?0?9?TTH:LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ|
+ (49 vs 69 bytes)
+====
+
+Meaning of this extension is to save some server upload bandwidth by shortening down the most frequently used search command. Here are some statistics regarding these commands comparing to old fashion commands:
+====
+ [*] $Search: 344579
+ [*] $Search Hub: 379696
+ [*] $SA: 243379
+ [*] $SP: 292746
+
+ [*] Total upload: 127.32 GB [395.34 KB/s]
+ [*] Upload saved with ZLib: 44.52 GB
+ [*] Upload saved with TTHS: 6.29 GB
+====
+
+*Note*: Not to be confused with TTHSearch extension.
+
+Add TTHS to the $Supports to indicate support for this.
+
+Hub softwares currently known to support this extension: Verlihub
+
+==== ZLIG
 Supporting this means that zlib compressed $ADCGET transfers are supported.
 
 Add ZLIG to the $Supports to indicate support for this.
@@ -1617,14 +1661,36 @@ Implementations supporting ACTM must reply to incoming $ConnectToMe and $RevConn
 During requests, the clients send a 4-digit hexadecimmal ID. This ID is an incremental number that is given out for each $CTM that it sent. When a connection between two clients is established, the other party must echo back this 4-digit ID. This is done after $Supports but before $Direction. If the 4-digit ID is not any of the unhandled IDs given out by the requesting client, it must signal "$Error Invalid ID" and disconnect.
 
 ===== CTM
- Client 1 to hub: $CTM client2_nick$client1_port$id|
- Hub forwarding to client 2: $CTM client1_ip$client1_port$id|
+Client 1 to hub:
+====
+ $CTM client2_nick$client1_port$id|
+====
+
+Hub forwarding to client 2:
+====
+ $CTM client1_ip$client1_port$id|
+====
 
 ===== RCTM
- Client 1 to hub: $RCTM client2_nick|
- Hub forwarding to client 2: $RCTM client1_nick|
- Client 2 to hub: $CTM client1_nick$client2_port$id|
- Hub forwarding to client 1: $CTM client2_ip$client2_port$id|
+Client 1 to hub:
+====
+ $RCTM client2_nick|
+====
+
+Hub forwarding to client 2:
+====
+ $RCTM client1_nick|
+====
+
+Client 2 to hub:
+====
+ $CTM client1_nick$client2_port$id|
+====
+
+Hub forwarding to client 1:
+====
+ $CTM client2_ip$client2_port$id|
+====
 
 Example handshake:
 [options="autowidth, header"]
@@ -1745,6 +1811,7 @@ Example:
 ====
 
 ==== FailOver
+
  $FailOver [host[,host]]|
 
 This feature is used to indicate support for providing alternative hub addresses in the event that the hub is unavailable. See footnoteref:[ADC-Ext FO, http://adc.sourceforge.net/ADC-EXT.html#_fo_failover_hub_addresses] for further information on the ADC equivalent.
@@ -1763,6 +1830,7 @@ Examples:
 ====
 
 ==== Hub icon
+
  $SetIcon image_uri|
 
 This feature is used to indicate an icon to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".
@@ -1778,7 +1846,8 @@ Examples:
 ====
 
 ==== Hub logo
- $SetIcon image_uri|
+
+ $SetLogo image_uri|
 
 This feature is used to indicate a logotype to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".
 
@@ -1792,7 +1861,70 @@ Examples:
  $SetLogo http://hub.example.org/img/logo.jpg|
 ====
 
+==== NickRule
+
+Contexts: Hub -> Client, Hub -> Pinger
+
+This extension specifies list of nick rules currently being set by hub configuration.
+
+The command is sent from hub to client right before the nick is about to be validated.
+
+Here is an example of such command:
+====
+ $NickRule Min 3$$Max 64$$Char 32 60 62$$Pref [ISP1] [ISP2]|
+====
+
+*Min* specifies minimum nick length.
+
+*Max* specifies maximum nick length.
+
+*Char* specifies space separated list of decimals forbidden to use in nick.
+
+*Pref* specifies space separated list of nick prefixes required for usage on the hub.
+
+Not all of the above parameters must be specified, the list is based on hub configuration.
+
+Client has a chance to automatically update its nick before sending $ValidateNick command, if possible.
+
+Clients that support NickRule but send invalid nick anyway, will receive $BadNick command with an error specification.
+
+Nick is too short:
+====
+ $BadNick Min 3|
+====
+
+Nick is too long:
+====
+ $BadNick Max 64|
+====
+
+Bad characters found in nick:
+====
+ $BadNick Char 60 62|
+====
+
+Bad prefix found in nick:
+====
+ $BadNick Pref|
+====
+
+One of prefixes are required in nick:
+====
+ $BadNick Pref [ISP1] [ISP2]|
+====
+
+Client should then automatically correct its nick and reconnect to the hub, if possible.
+
+Meaning of this extension is to avoid extra reconnects when nick rules are heavily restricted.
+
+This applies only to non registered nicks.
+
+Add NickRule to the $Supports to indicate support for this.
+
+Hub softwares currently known to support this extension: Verlihub
+
 == Examples
+
 === Client – Hub connection
 
 See respective command for description of command and parameters.
@@ -1847,7 +1979,6 @@ See respective command for description of command and parameters.
 |=====
 
 == License
-This document is licensed under the New BSD License (3-clause BSD license).
+This document is licensed under the GPLv3 license.
 
 // vim: set syntax=asciidoc:
-
