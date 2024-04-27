@@ -1,8 +1,9 @@
 = NMDC Protocol
 :author: Aleksandr Zenkov
 :email: webmaster@feardc.net
-:revdate: 2024-04-08
+:revdate: 2024-04-27
 :revnumber: 1.4
+:lang: en
 
 == Abstract
 Neo-Modus Direct Connect (NMDC) is a text protocol for a client-server network. The same protocol structure is used both for client-hub and client-client communication. This document is split into two parts; the first shows the structure of the protocol, while the second implements a specific system using this structure.
@@ -15,12 +16,13 @@ The protocol's basic outline was written by Jon Hess in 1998 for the NMDC client
 This document uses information from many sources, including but not limited to;
 
 * Ptokax wiki: http://wiki.ptokax.org
-* TeamFair wiki
+* TeamFair wiki: https://web.archive.org/web/20090313025627/http://www.teamfair.info/wiki/index.php?title=Main_Page
 * The Nighthawk forum
-* Mutor protocol docs
+* Mutor protocol docs: https://sourceforge.net/p/nmdc/svnroot/HEAD/tree/trunk/Other/mutor_protocoldoc.htm
 * Verlihub NMDC section: https://www.te-home.net/?do=work&id=verlihub&page=nmdc
+* MyDC portal: http://mydc.ru/topic915.html + http://mydc.ru/topic5095.html
 
-This document was compiled using AsciiDoc3 {asciidoc3-version} by {author}.
+This document was compiled on {docdate} using AsciiDoc3 {asciidoc3-version} by {author}.
 
 == Version history
 The latest draft of the next version of this document as well as intermediate
@@ -34,13 +36,18 @@ Fredrik Ullner <ullner@gmail>, 2013-12-20
 
 {author} <{email}>, {revdate}
 
-* Upgraded to AsciiDoc3
-* Removed inaccessible URLs
+* Updated to AsciiDoc3
+* Fixed inaccessible URLs
 * Added CTM2HUB in $Error
 * Added $SetLogo extension
 * Changed $HubINFO to support category and encoding parameters
 * Added TTHS extension
 * Added NickRule extension
+* Added SearchRule extension
+* Added HubURL extension
+* Added NAT extension
+* Added new connection types
+* Fixed $MyINFO status bytes
 
 === Version 1.3
 Fredrik Ullner <ullner@gmail>, 2013-03-09
@@ -119,7 +126,7 @@ This information can also be provided in a client - hub connection.
 
 Example:
 ====
- $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.666Ref=example.com:411
+ $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881Ref=example.com:411
 ====
 
 ==== Escape sequences
@@ -147,7 +154,7 @@ The following escape sequences exist for this method;
 
 Example:
 ====
- <John> I am going to display a dollar sign /%DCN036%/ and then a pipe /%DCN124%/.|
+ <john> I am going to display a dollar sign /%DCN036%/ and then a pipe /%DCN124%/.|
 ====
 
 ===== Method 2
@@ -169,7 +176,7 @@ The following escape sequences exist for this method;
 
 Example:
 ====
- <John> I am going to display a dollar sign &#36; and then a pipe &#124;.|
+ <john> I am going to display a dollar sign &#36; and then a pipe &#124;.|
 ====
 
 ==== $Key/$Lock sequence
@@ -242,7 +249,7 @@ Note that the brackets (< and >) are required. Some implementations allow spaces
 
 Example:
 ====
- <John> cats are cute|
+ <john> cats are cute|
 ====
 
 ==== $To
@@ -607,16 +614,19 @@ The '<' and '>' use in here should not be taken literally; they are there to vis
 
 Connection is a string for the connection:
 
-* Default NMDC1 connections types 28.8Kbps, 33.6Kbps, 56Kbps, Satellite, ISDN, DSL, Cable, LAN(T1), LAN(T3) 
+* Default NMDC1 connections types: 28.8Kbps, 33.6Kbps, 56Kbps, Satellite, ISDN, DSL, Cable, LAN(T1), LAN(T3)
 
-* Default NMDC2 connections types Modem, DSL, Cable, Satellite, LAN(T1), LAN(T3) 
+* Default NMDC2 connections types: Modem, DSL, Cable, Satellite, LAN(T1), LAN(T3)
+
+* New connections types for NMDC2: 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 1000
 
 Later implementations also send other speeds. Implementations should simply display the value to the user and not create any inhibitions based on the reported speed.
 
 ===== Flag
-Flag is a ASCII character (8 bit byte). 
 
-There are multiple implementations of this byte. 
+Flag is a ASCII character (8 bit byte).
+
+There are multiple implementations of this byte.
 
 The values listed here are the bits within the flag byte. The following is the original:
 [options="autowidth,header"]
@@ -632,8 +642,8 @@ The values listed here are the bits within the flag byte. Newer implementations 
 [options="autowidth,header"]
 |=====
 |Bit |Description
-|5 |Support for TLS. For all connections when TLS extension is supported. For download only when TLS1 extension is supported.
-|6 |Support for TLS upload when TLS1 extension is supported.
+|5 |Support for TLS-encrypted client-client connections when TLS extension is supported.
+|6 |Support for NAT-traversal client-client connections when NAT extension is supported.
 |7 |Support for IPv4 when IP64 extension is supported.
 |8 |Support for IPv6 when IP64 extension is supported.
 |=====
@@ -642,16 +652,17 @@ The values listed here are decimal values. Other implementations interpreted thi
 [options="autowidth,header"]
 |=====
 |Decimal |Description
-|1 |Normal
-|2 and 3 |Away
-|4 and 5 |Server. Used when the client has uptime > 2 hours, > 2 GB shared, upload > 200 MB. 
-|6 and 7 |Server away
-|8 and 9 |Fireball. Used when the client has had an upload > 100 kB/s. 
-|10 and 11 |Fireball away
+|1 |Normal status.
+|2 |Away status, used when the client has away status set.
+|4 |Server status, used when the client has uptime > 2 hours, > 2 GiB shared, upload > 200 MiB.
+|8 |Fireball status, used when the client had an upload > 100 KiB/s.
+|16 |TLS support, used when client supports TLS-encrypted connnections.
+|32 |NAT support, used when client supports NAT-traversal connnections.
+|64 |IPv4 support, used when client supports IPv4.
+|128 |IPv6 support, used when client supports IPv6.
 |=====
 
-Example verification with the first and second approach:
-====
+Example verification:
 [options="autowidth,header"]
 |=====
 |Flag calculation |Result
@@ -659,33 +670,18 @@ Example verification with the first and second approach:
 |if Flag & 0x2 |Away status
 |if Flag & 0x4 |Server status
 |if Flag & 0x8 |Fireball status
-|if Flag & 0x10 |TLS support for downloads
-|if Flag & 0x20 |TLS support for uploads (with TLS1)
+|if Flag & 0x10 |TLS support
+|if Flag & 0x20 |NAT support
 |if Flag & 0x40 |IPv4 support
 |if Flag & 0x80 |IPv6 support
 |=====
-====
-
-Example verification with the third approach:
-====
-[options="autowidth,header"]
-|=====
-|Flag calculation |Result
-|if Flag == 1 ) |Normal status
-|if Flag == 2 OR Flag == 3 |Away status
-|if Flag == 4 OR Flag == 5 |Server status
-|if Flag == 6 OR Flag == 7 |Server and away status
-|if Flag == 8 OR Flag == 9 |Fireball status
-|if Flag == 10 OR Flag == 11 |Fireball and away status
-|=====
-====
 
 ===== Tag
 This addition to the description field was introduced to ease concerns by hub operators that DC++ users were joining too many hubs and not allowing enough uploads. (The original DC client only allowed users to join a single hub.) The tag is now the de facto standard. 
 
 Example:
 ====
-<++ V:0.673,M:P,H:0/1/0,S:2>
+ <++ V:0.881,M:P,H:0/1/0,S:2>
 ====
 
 * "\+\+": indicates the client (in this case, DC++)
@@ -707,7 +703,7 @@ Note that the IPv4/IPv6 extensions add additional data to the M. See the IPv4/IP
 Example:
 Note that the example uses '0x31' for signaling the flag as 'Normal', for ease of display.
 ====
-$MyINFO $ALL johndoe <++ V:0.673,M:P,H:0/1/0,S:2>$ $LAN(T3)0x31$example@example.com$1234$\|
+ $MyINFO $ALL johndoe <++ V:0.881,M:P,H:0/1/0,S:2>$ $1000x31$example@example.com$1234$\|
 ====
 
 ==== $GetINFO
@@ -863,9 +859,9 @@ Implementation note: In NMDC hub;
 Example:
 See $Supports for the use of EXTENDED.
 ====
-$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.706ABCABC|
+ $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881|
 
-$Lock EXTENDEDPROTOCOL_verlihub Pk=version0.9.8e-r2|
+ $Lock EXTENDEDPROTOCOL_NMDC_TLS_2903 Pk=Verlihub 1.5.0.0|
 ====
 
 ==== $Key
@@ -1622,9 +1618,9 @@ Example active search request:
 Example passive search request:
 ====
  (new command)
- $SP LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ John|
+ $SP LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ john|
  (old command)
- $Search Hub:John F?T?0?9?TTH:LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ|
+ $Search Hub:john F?T?0?9?TTH:LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ|
  (49 vs 69 bytes)
 ====
 
@@ -1697,9 +1693,9 @@ Example handshake:
 |=====
 |Client party |Server party
 | |$MyNick peter\| 
-| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.668ABCABC\|
+| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881\|
 |$MyNick john\| |
-|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk DCPLUSPLUS0.668ABCABC\| |
+|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.880\| |
 | |$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ACTM GetZBlock ZLIG\|
 | |$Direction Download 17762\|
 | |$Key ...\|
@@ -1778,15 +1774,35 @@ Add IP64 to the $Supports to indicate support for this.
 A client that support IPv4 and IPv6 will only use one form when sending messages to a hub. The hub is responsible for translating the command into the correct IPv4/IPv6 address. E.g., if a $Search is sent with a IPv6 address, the hub will send the client's IPv4 address to those who only support IPv4. This minimizes the amount of traffic toward the hub. If a client sent a passive search request, then it is only sent to active users supporting the same TCP/IP protocol. This is regardless if the client is active in the other protocol. I.e., if a passive search request is sent with a IPv4 address, that search request will only be forwarded to IPv4 users and not 'converted' to an IPv6 request, regardless if the client is active in IPv6.
 
 ==== TLS
-This feature is used to indicate support for TLS encrypted client-client connections.
 
-Implementations shall add an 'S' to the (TLS) port in a $ConnectToMe.
+Contexts: Client -> Client
+
+This feature is used to indicate support for TLS-encrypted client-client connections.
+This feature can be used in conjunction with NAT feature specified below.
+
+Implementations shall add an 'S' to the TLS port in a $ConnectToMe.
 
 Add TLS to the $Supports to indicate support for this.
 
-Example:
+Example connection request:
 ====
  $ConnectToMe john 192.168.0.1:412S|
+====
+
+==== NAT
+
+Contexts: Client -> Client
+
+This feature is used to indicate support for NAT-traversal in passive client-client connections.
+This feature can be used in conjunction with TLS feature specified above.
+
+Implementations shall add an 'N <nick>' and 'R' to the port in a $ConnectToMe.
+
+Example connection request:
+====
+ $RevConnectToMe Client1 Client2|
+ $ConnectToMe Client1 192.168.0.1:412N Client2|
+ $ConnectToMe Client2 192.168.0.2:412R|
 ====
 
 ==== DHT
@@ -1831,13 +1847,13 @@ Examples:
 
 ==== Hub icon
 
+Contexts: Hub -> Pinger
+
  $SetIcon image_uri|
 
 This feature is used to indicate an icon to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".
 
-Hubs that send this also support HubINFO.
-
-Hub softwares currently known to support this command: HeXHub, Verlihub
+Hubs that send this also support $HubINFO.
 
 Examples:
 ====
@@ -1845,15 +1861,17 @@ Examples:
  $SetIcon http://hub.example.org/img/image.ico|
 ====
 
+Hub softwares currently known to support this command: HeXHub, Verlihub
+
 ==== Hub logo
+
+Contexts: Hub -> Pinger
 
  $SetLogo image_uri|
 
 This feature is used to indicate a logotype to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".
 
-Hubs that send this also support HubINFO.
-
-Hub softwares currently known to support this command: HeXHub, Verlihub
+Hubs that send this also support $HubINFO.
 
 Examples:
 ====
@@ -1861,12 +1879,13 @@ Examples:
  $SetLogo http://hub.example.org/img/logo.jpg|
 ====
 
+Hub softwares currently known to support this command: HeXHub, Verlihub
+
 ==== NickRule
 
 Contexts: Hub -> Client, Hub -> Pinger
 
 This extension specifies list of nick rules currently being set by hub configuration.
-
 The command is sent from hub to client right before the nick is about to be validated.
 
 Here is an example of such command:
@@ -1923,6 +1942,69 @@ Add NickRule to the $Supports to indicate support for this.
 
 Hub softwares currently known to support this extension: Verlihub
 
+==== SearchRule
+
+Contexts: Hub -> Client
+
+This extension specifies list of search rules currently being used by hub configuration.
+The command is sent from hub to client right after the user is successfully logged in.
+
+Here is an example of such command:
+====
+ $SearchRule Min 3$$Max 256$$Num 1$$Int 4$$IntPas 6$$Share 10737418240|
+====
+
+*Min* specifies minimum search string length.
+
+*Max* specifies maximum search command length.
+
+*Num* specifies number of searches available for use during a period of time.
+
+*Int* specifies the period itself in seconds for active search requests for current user profile.
+
+*IntPas* specifies the period in seconds for passive search requests for current user profile.
+
+*Share* specifies minimum share size in bytes required for search for current user profile.
+
+Not all of the above parameters must be specified, the list is based on hub configuration.
+Client has a chance to automatically update its search interval settings for each hub, compare its share size with required size and prepare other kind of actions before sending any search request commands.
+
+*Int* and *IntPas* might be set to *0* - which means that user is actually allowed to search without time limit, and might be set to *-1* - which means that user is not allowed to use search at all due to low profile or any other kind of restrictions.
+
+Meaning of this extension is to avoid extra search requests to the hub, which are not going to bring any search results to the user anyway.
+Atleast the user will know the reason of search results not appearing for him on a specific hub.
+
+Add SearchRule to the $Supports to indicate support for this.
+
+Hub softwares currently known to support this extension: Verlihub
+
+==== HubURL
+
+Contexts: Hub > Client, Client > Hub, Hub > Pinger, Pinger > Hub
+
+This extension allows the client to specify hub URL currently being used for connection to the hub.
+
+Hub sends following request to the client sometime during the handshake:
+====
+ $GetHubURL|
+====
+
+Client replies with following command:
+====
+ $MyHubURL hub.example.org:412|
+====
+
+Client should not spend any resources on parsing the URL, it is enough to use the 'getHubUrl' method as is.
+
+Meaning of this extension is to collect statistics about hub addresses being used in a hub by its users, and also to extend address checking functionality to redirect users to most preferable hub address or port.
+
+The idea was also to implement $SetHubURL command to specify preferable hub address without need to reconnect to the hub, in case it was accessed from hub favorites list.
+We are hoping to finish this last part of the implementation very soon.
+
+Add HubURL to the $Supports to indicate support for this.
+
+Hub softwares currently known to support this extension: Verlihub
+
 == Examples
 
 === Client – Hub connection
@@ -1931,29 +2013,29 @@ See respective command for description of command and parameters.
 
 [options="autowidth,header"]
 |=====
-|Client |Hub
-| |$Lock EXTENDEDPROTOCOL_verlihub Pk=version0.9.8e-r2\|
-|$Supports UserCommand UserIP2 TTHSearch ZPipe0 GetZBlock\| |
+|Client|Hub
+| |$Lock EXTENDEDPROTOCOL_NMDC_TLS_2903 Pk=Verlihub 1.5.0.0\|
+|$Supports UserCommand NoGetINFO NoHello UserIP2 TTHSearch ZPipe0\| |
 |$Key 011010110110010101111001\| |
 |$ValidateNick johndoe\| |
-| |<VerliHub> This hub is running version 0.9.8e-r2 (Monday Jul 20 2009) of VerliHub (RunTime: 2weeks 1hours  / Current user count: 4)\|
-| |<VerliHub> This hub is enhanced by plugman for Verlihub.\|
-| |$Supports OpPlus NoGetINFO NoHello UserIP2 HubINFO\|
+| |$Supports NoGetINFO NoHello UserIP2 TTHSearch ZPipe0 UserCommand\|
 | |$HubName Verlihub\|
 | |$GetPass\|
 |$MyPass mysecurepass55555\| |
 | |$Hello johndoe\|
 |$Version 1,0091\| |
 |$GetNickList\| |
-|$MyINFO $ALL johndoe <++ V:0.673,M:P,H:0/1/0,S:2>$ $LAN(T3)0x31$example@example.com$1234$\| |
+|$MyINFO $ALL johndoe <++ V:0.881,M:P,H:0/1/0,S:2>$ $1000x31$johndoe@example.com$12345$\| |
 | |$LogedIn johndoe\|
-| |$NickList Bot$$TestNick$$aaa$$VerliHub$$bbb$$OpChat$$\|
+| |<Verlihub> Software: Verlihub 1.5.0.0 ][ Uptime: 5 days 12 hours ][ Users: 196 ][ Share: 95.23 TB ][ Powered by Ledokol 2.9.9.141\|
+| |$MyINFO $ALL Verlihub Hub security$ $0x31$$0$\|
+| |$MyINFO $ALL OpChat Operator chat$ $0x31$$0$\|
+| |$MyINFO $ALL TestNick <++ V:0.880,M:P,H:1/0/0,S:10>$ $100x31$test@example.com$23456$\|
+| |$MyINFO $ALL aaa <++ V:0.881,M:P,H:0/0/1,S:5>$ $500x31$aaa@example.com$56789$\|
+| |$MyINFO $ALL bbb <++ V:0.880,M:A,H:1/0/0,S:3>$ $200x31$bbb@example.com$34567$\|
+| |$OpList Verlihub$$OpChat$$\|
 | |<MOTD> This is the MOTD message.\|
-| |$HubTopic The topic of the hub is not set.\|
-| |$OpList TestNick$$aaa$$bbb$$VerliHub$$OpChat$$\|
-| |$BotList Bot$$VerliHub$$OpChat$$\|
 |=====
-
 
 === Client – Client connection
 
@@ -1963,11 +2045,11 @@ See respective command for description of command and parameters.
 
 [options="autowidth,header"]
 |=====
-|Client |Server
+|Client|Server
 | |$MyNick bbb\|
 |$MyNick aaa\| |
-|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.706ABCABC\| |
-| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.777Ref=dchub://example.org:411\|
+|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881\| |
+| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881Ref=dchub://example.org:411\|
 |$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ZLIG\| |
 |$Direction Download 31604\| |
 |$Key 011010110110010101111001\| |
