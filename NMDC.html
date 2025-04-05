@@ -1,0 +1,3863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc3 3.2.3" />
+<title>NMDC Protocol</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc3 xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(4);
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>NMDC Protocol</h1>
+<span id="author">Aleksandr Zenkov</span><br />
+<span id="email"><code>&lt;<a href="mailto:webmaster@feardc.net">webmaster@feardc.net</a>&gt;</code></span><br />
+<span id="revnumber">version 1.4,</span>
+<span id="revdate">2024-04-27</span>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_abstract">1. Abstract</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Neo-Modus Direct Connect (NMDC) is a text protocol for a client-server network. The same protocol structure is used both for client-hub and client-client communication. This document is split into two parts; the first shows the structure of the protocol, while the second implements a specific system using this structure.</p></div>
+<div class="paragraph"><p>NMDC was written by Jon Hess, in the implementation of the (proprietary) NMDC client and hub software, but was never documented. The protocol was reverse-engineered later on by others, and soon followed open implementations. Extensions have followed over the years and may be incompatible with the original NMDC software.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authors">2. Authors</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The protocol&#8217;s basic outline was written by Jon Hess in 1998 for the NMDC client. Major influencers in the development that followed of NMDC include (in no particular order): Jacek Sieka, Sid, aDe, David Marwood, Suxxx, Stefan Gorling, Sphinx, HaArd and others.</p></div>
+<div class="paragraph"><p>This document uses information from many sources, including but not limited to;</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Ptokax wiki: <a href="http://wiki.ptokax.org">http://wiki.ptokax.org</a>
+</p>
+</li>
+<li>
+<p>
+TeamFair wiki: <a href="https://web.archive.org/web/20090313025627/http://www.teamfair.info/wiki/index.php?title=Main_Page">https://web.archive.org/web/20090313025627/http://www.teamfair.info/wiki/index.php?title=Main_Page</a>
+</p>
+</li>
+<li>
+<p>
+The Nighthawk forum
+</p>
+</li>
+<li>
+<p>
+Mutor protocol docs: <a href="https://sourceforge.net/p/nmdc/svnroot/HEAD/tree/trunk/Other/mutor_protocoldoc.htm">https://sourceforge.net/p/nmdc/svnroot/HEAD/tree/trunk/Other/mutor_protocoldoc.htm</a>
+</p>
+</li>
+<li>
+<p>
+Verlihub NMDC section: <a href="https://www.te-home.net/?do=work&amp;id=verlihub&amp;page=nmdc">https://www.te-home.net/?do=work&amp;id=verlihub&amp;page=nmdc</a>
+</p>
+</li>
+<li>
+<p>
+MyDC portal: <a href="http://mydc.ru/topic915.html">http://mydc.ru/topic915.html</a> + <a href="http://mydc.ru/topic5095.html">http://mydc.ru/topic5095.html</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>This document was compiled on 2024-04-27 using AsciiDoc3 3.2.3 by Aleksandr Zenkov.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_version_history">3. Version history</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The latest draft of the next version of this document as well as intermediate
+and older versions can be downloaded from <a href="https://github.com/dc-protocols/nmdc">https://github.com/dc-protocols/nmdc</a></p></div>
+<div class="sect2">
+<h3 id="_version_1_4">3.1. Version 1.4</h3>
+<div class="paragraph"><p>Fredrik Ullner &lt;<a href="mailto:ullner@gmail">ullner@gmail</a>&gt;, 2013-12-20</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Added $SetIcon extension
+</p>
+</li>
+<li>
+<p>
+Added note on $ADCGet&#8217;s use of ADC fields
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Aleksandr Zenkov &lt;<a href="mailto:webmaster@feardc.net">webmaster@feardc.net</a>&gt;, 2024-04-27</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Updated to AsciiDoc3
+</p>
+</li>
+<li>
+<p>
+Fixed inaccessible URLs
+</p>
+</li>
+<li>
+<p>
+Added CTM2HUB in $Error
+</p>
+</li>
+<li>
+<p>
+Added $SetLogo extension
+</p>
+</li>
+<li>
+<p>
+Changed $HubINFO to support category and encoding parameters
+</p>
+</li>
+<li>
+<p>
+Added TTHS extension
+</p>
+</li>
+<li>
+<p>
+Added NickRule extension
+</p>
+</li>
+<li>
+<p>
+Added SearchRule extension
+</p>
+</li>
+<li>
+<p>
+Added HubURL extension
+</p>
+</li>
+<li>
+<p>
+Added NAT extension
+</p>
+</li>
+<li>
+<p>
+Added new connection types
+</p>
+</li>
+<li>
+<p>
+Fixed $MyINFO status bytes
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_3">3.2. Version 1.3</h3>
+<div class="paragraph"><p>Fredrik Ullner &lt;<a href="mailto:ullner@gmail">ullner@gmail</a>&gt;, 2013-03-09</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Changed note about escape sequences
+</p>
+</li>
+<li>
+<p>
+Added IPv4 and IPv6 extensions
+</p>
+</li>
+<li>
+<p>
+More clarification on $MyInfo&#8217;s flag
+</p>
+</li>
+<li>
+<p>
+Moved some commands to/from extensions
+</p>
+</li>
+<li>
+<p>
+Added note about XmlBzList and DC++'s dropped support
+</p>
+</li>
+<li>
+<p>
+Added TLS and DHT extensions
+</p>
+</li>
+<li>
+<p>
+Clarified (corrected) $UserIP and UserIP2
+</p>
+</li>
+<li>
+<p>
+Added $Cancel and noted that $Canceled was only used briefly
+</p>
+</li>
+<li>
+<p>
+Added QP extension
+</p>
+</li>
+<li>
+<p>
+Added FailOver extension
+</p>
+</li>
+<li>
+<p>
+Added security considerations to the protocol
+</p>
+</li>
+<li>
+<p>
+Added URI scheme description
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_2">3.3. Version 1.2</h3>
+<div class="paragraph"><p>Fredrik Ullner &lt;<a href="mailto:ullner@gmail.com">ullner@gmail.com</a>&gt;, 2013-01-16</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Added $ZOn and ZPipe0 feature.
+</p>
+</li>
+<li>
+<p>
+Fixed use of ASCIIDoc regarding a "link" in $Key.
+</p>
+</li>
+<li>
+<p>
+Added some minor descriptions to the extensions Feed and OpPlus.
+</p>
+</li>
+<li>
+<p>
+Added note about <em>Ref</em> in a $Lock.
+</p>
+</li>
+<li>
+<p>
+Added SaltPass feature
+</p>
+</li>
+<li>
+<p>
+Introduced a new category, "Extensions (commands)" to signify that a command require an a $Support and/or is not in the original implementations.
+</p>
+</li>
+<li>
+<p>
+Added note about source of information within this document.
+</p>
+</li>
+<li>
+<p>
+Changed $MyINFO according to how the flag is used.
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_1">3.4. Version 1.1</h3>
+<div class="paragraph"><p>Fredrik Ullner &lt;<a href="mailto:ullner@gmail.com">ullner@gmail.com</a>&gt;, 2013-01-02</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Added additional commands and extensions to document
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_version_1_0">3.5. Version 1.0</h3>
+<div class="paragraph"><p>Fredrik Ullner &lt;<a href="mailto:ullner@gmail.com">ullner@gmail.com</a>&gt;</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Initial release
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_protocol">4. Protocol</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_general">4.1. General</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+Most messages begin with a <em>$</em> (dollar sign).
+</p>
+</li>
+<li>
+<p>
+Most messages end with a <em>|</em> (pipe).
+</p>
+</li>
+<li>
+<p>
+Command names and parameters use single space (' ') and additional dollar signs as separators.
+</p>
+</li>
+<li>
+<p>
+There is no standardization on code page to use. The local charset of the computer system is commonly used. The original implementation used win.1252.
+</p>
+</li>
+<li>
+<p>
+Hub port defaults to 411. The client should then try 412, 413 etc.
+</p>
+</li>
+<li>
+<p>
+Client - Client port defaults to 412.
+</p>
+</li>
+<li>
+<p>
+Some command names are incorrectly spelled, per the original protocol. This document notes when a spelling error is <em>intentional</em>, per the original protocol.
+</p>
+</li>
+<li>
+<p>
+The hub should validate that the client sending the message is actually the correct user.
+</p>
+</li>
+<li>
+<p>
+This document does not (mainly) use <em>&lt;</em> and <em>&gt;</em> brackets for illustration purposes; any occurrence should be taken literally, unless otherwise noted.
+</p>
+</li>
+<li>
+<p>
+This document use <em>[</em> and <em>]</em> brackets for optional data; any literal occurrence will be noted as such.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>There are different types of routed messages:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Client to Hub</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Client to Hub to Client</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Hub to Client</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Hub to Hub</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Hub to Hublist</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Hub to Pinger</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Pinger to Hub</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_status_messages">4.1.1. Status messages</h4>
+<div class="paragraph"><p>Most clients send a chat message to all users to indicate that a user has been kicked. That is, if a client A kicks client B, client A will send out a message to client C and D to indicate that the client B is kicked. To avoid being potentially flooded by this message, clients have implemented a de facto message to indicate kicks.
+ &lt;john&gt; is kicking peter because: I am not a dog person|
+The key aspect here is the two phrases "is kicking" and "because:". Including these two parts, regardless of the other content, will cause most clients to show the message as a status bar message.</p></div>
+<div class="paragraph"><p>Note that the hub will not actually treat this as a kick.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_reference_to_hub_in_lock">4.1.2. Reference to hub in $Lock</h4>
+<div class="paragraph"><p>To identify the source of the hub in a client - client connection, some clients add a reference to the hub in the $Lock that is sent, where the information is placed in the Pk parameter.</p></div>
+<div class="paragraph"><p>This information can also be provided in a client - hub connection.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881Ref=example.com:411</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_escape_sequences">4.1.3. Escape sequences</h4>
+<div class="paragraph"><p>There are two ways protocol delimiters are displayable (dollar sign, pipe etc);</p></div>
+<div class="sect4">
+<h5 id="_method_1">Method 1</h5>
+<div class="paragraph"><p>By using /%DCNXXX%/ where XXX is the decimal number for an ASCII character.</p></div>
+<div class="paragraph"><p>This escape sequence method is used by all implementations for the $Key/$Lock sequence (see below). This is also used by multiple implementations for normal viewing purposes (e.g. in a chat message).</p></div>
+<div class="paragraph"><p>This escape sequence predates the second method listed below.</p></div>
+<div class="paragraph"><p>The following escape sequences exist for this method;</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Escape sequence </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">/%DCN000%/</p></td>
+<td align="left" valign="top"><p class="table">0x0a, null character. Not allowed elsewhere in the protocol.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">/%DCN005%/</p></td>
+<td align="left" valign="top"><p class="table">Enquiry character. Used by some commands.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">/%DCN036%/</p></td>
+<td align="left" valign="top"><p class="table">$, dollar sign. Used by (almost) all commands.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">/%DCN096%/</p></td>
+<td align="left" valign="top"><p class="table">`, grave accent.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">/%DCN124%/</p></td>
+<td align="left" valign="top"><p class="table">|, pipe. Used at end of commands.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">/%DCN126%/</p></td>
+<td align="left" valign="top"><p class="table">~, tilde.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>&lt;john&gt; I am going to display a dollar sign /%DCN036%/ and then a pipe /%DCN124%/.|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect4">
+<h5 id="_method_2">Method 2</h5>
+<div class="paragraph"><p>By using the HTML equivalent of the character.</p></div>
+<div class="paragraph"><p>This escape sequence was created in and is used by DC++.</p></div>
+<div class="paragraph"><p>Note that DC++ uses the first method for the $Key/$Lock sequence. DC++ uses this method for displayment purposes (e.g. chat messages).</p></div>
+<div class="paragraph"><p>The following escape sequences exist for this method;</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Escape sequence </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">&amp;#36;</p></td>
+<td align="left" valign="top"><p class="table">$, dollar sign. Used by (almost) all commands.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">&amp;#124;</p></td>
+<td align="left" valign="top"><p class="table">|, pipe. Used at end of commands.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">&amp;amp;</p></td>
+<td align="left" valign="top"><p class="table">&amp;, ampersand.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>&lt;john&gt; I am going to display a dollar sign &amp;#36; and then a pipe &amp;#124;.|</code></pre>
+</div></div>
+</div></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_key_lock_sequence">4.1.4. $Key/$Lock sequence</h4>
+<div class="paragraph"><p>After the first NMDC client and hub was introduced, others began to create their own implementation of the NMDC protocol. The original NMDC client and hub was freeware but not open source. In a way to combat other implementations, the author of the protocol decided upon a way to restrict the other implementations by a pseudo-cryptographic key exchange.</p></div>
+<div class="paragraph"><p>This exchange is typically referenced as a pseudo-Diffie-Hellman key exchange for its similarity, although they are not equivalent.</p></div>
+<div class="paragraph"><p>The $Key and $Lock commands are not listed as extensions as they exist in at least NMDC hub 1.0.25 and NMDC client 1.0 Preview Build 9.1.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security_considerations">4.2. Security Considerations</h3>
+<div class="sect3">
+<h4 id="_distributed_denial_of_service_potential">4.2.1. Distributed Denial of Service Potential</h4>
+<div class="paragraph"><p>The ongoing operation of NMDC&#8217;s peer to peer connections provides
+opportunities for both malicious clients on certain hubs and
+malicious hubs to coordinate clients of those hubs in connecting en
+masse to an arbitrarily specified IP address and port. Hubs SHOULD
+mitigate this risk by only relaying such connection requests when
+it can verify that the IP addresses and ports contained therein
+belong to clients initiating such peer to peer connection requests.
+Clients SHOULD effect similar amelioration through both attempting to
+reconnect only to hubs to which they have initially connected once
+and by providing upon connection referrer information regarding which
+hub has relayed to them the IP and port to which they are connecting.</p></div>
+<div class="paragraph"><p>See also "Reference to hub in $Lock".</p></div>
+</div>
+<div class="sect3">
+<h4 id="_case_sensitivity_mismatches_and_duplicated_shares_entries">4.2.2. Case-sensitivity Mismatches and Duplicated Shares Entries</h4>
+<div class="paragraph"><p>Both accidentally due to differences in filesystem case-sensitivity
+assumptions and intentionally by malicious clients can arise
+filelists containing either entires either entirely or up to case
+identical. Client software SHOULD detect these cases and avoid
+wasteful downloading.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_filelist_processing_memory_usage">4.2.3. Filelist Processing Memory Usage</h4>
+<div class="paragraph"><p>The bzip2-compressed filelists that NMDC URIs ending in a separator
+are required to process potentially expand due to malicious
+construction to cause a processing client to exhaust its memory or
+address-space capacity. Likewise, even non-malicious filelists can
+grow arbitrarily large such that in combination with other memory
+requirements of client software, similar exhaustion occurs. Client
+software therefore SHOULD bound bzip2 decompression memory usage and
+use streaming XML APIs to process filelists.</p></div>
+<div class="paragraph"><p>See <span class="footnote" id="_footnote_DC++ 0.75 and older vulnerable to bzip2 filelist bomb"><br />[<a href="https://dcpp.wordpress.com/2010/03/12/dc-0-75-and-older-vulnerable-to-bzip2-filelist-bomb/">https://dcpp.wordpress.com/2010/03/12/dc-0-75-and-older-vulnerable-to-bzip2-filelist-bomb/</a>]<br /></span> for more information.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_excessive_local_storage_consumption">4.2.4. Excessive Local Storage Consumption</h4>
+<div class="paragraph"><p>The zlib compression supported by NMDC for client-client transfers
+permits construction of transferred data which consume disk space
+substantially more rapidly for the downloading client than network
+bandwidth would indicate. Client software SHOULD monitor downloads
+for impending storage capacity limits with a view to prevent local
+denials of service resulting from exceeding them.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_uri_scheme">4.3. URI scheme</h3>
+<div class="paragraph"><p>See the URI scheme document following this document.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_commands">4.4. Commands</h3>
+<div class="sect3">
+<h4 id="_chat_message">4.4.1. Chat message</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>&lt;nick&gt; message|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Will send a chat message by <em>nick</em>. The hub should broadcast the message to all clients if a client send this.</p></div>
+<div class="paragraph"><p>Note that the brackets (&lt; and &gt;) are required. Some implementations allow spaces in the nickname; be aware that other implementations may simply search for the first occurrence of a space. If the chat message contain a pipe, it should be replaced by its HTML equivalent.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>&lt;john&gt; cats are cute|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_to">4.4.2. $To</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$To: othernick From: nick $&lt;nick&gt; message|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Will send a private message from one user to another user. The same rules as a basic chat message apply.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$To: john From: peter $&lt;peter&gt; dogs are more cute|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_connecttome">4.4.3. $ConnectToMe</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ConnectToMe RemoteNick SenderIp:SenderPort</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Request that remotenick connect to the sending user for an active TCP connection for file transfers. Clients sending this must allow incoming TCP connections. There is no default port.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$ConnectToMe john 192.168.1.2:412|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Note that the above is for older clients.</p></div>
+<div class="paragraph"><p>Newer versions of NMDC client include the sender&#8217;s nick as well (but may not be compatible with all implementations);</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ConnectToMe SenderNick RemoteNick SenderIp:SenderPort</code></pre>
+</div></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$ConnectToMe peter john 192.168.1.2:412|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_revconnecttome">4.4.4. $RevConnectToMe</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$RevConnectToMe SenderNick RemoteNick|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Request that the remotenick send a ConnectToMe back to SenderNick. Clients sending do not allow incoming TCP connections whereas the remote user does (or should).</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$RevConnectToMe peter john|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_ping">4.4.5. $Ping</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Ping sender_ip:sender_port|</code></pre>
+</div></div>
+<div class="paragraph"><p>sender_ip is the IP address of the remote client.</p></div>
+<div class="paragraph"><p>sender_port is the port of the remote client that is being listened to.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_getpass">4.4.6. $GetPass</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$GetPass|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Request that the client send a password that correspond to a user account (matched by the user&#8217;s nick name).</p></div>
+</div>
+<div class="sect3">
+<h4 id="_mypass">4.4.7. $MyPass</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MyPass password|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>Providing the password (in plain text) to the hub after a request. Implementations should be aware of potential pipe and dollar signs in the password.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$MyPass qwerty|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_logedin">4.4.8. $LogedIn</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$LogedIn nick|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Sent to users who successfully log in. Note that the message should only be sent to operators. Note that some implementations do not use this command. The spelling of this command is not a mistake.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$LogedIn john|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_get">4.4.9. $Get</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Get file$offset|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>file is the remote location (including path) of the file.</p></div>
+<div class="paragraph"><p>offset is the byte offset to start at for resuming files.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$Get C:/Uploads/myfile.txt$15|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_send">4.4.10. $Send</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Send|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This is used as a way to specify that the file should be sent. The uploader should proceed to stream the amount of bytes requested previously.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_provide_file_size">4.4.11. Provide file size</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$FileLength file_size|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used as a way to provide the size of the file requested.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_getlistlen">4.4.12. $GetListLen</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$GetListLen|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>Get file list size.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_listlen">4.4.13. $ListLen</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ListLen file_size|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used as a way to provide the size of the file list of the client.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_direction">4.4.14. $Direction</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Direction direction number|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used as a way to decide which party should be allowed to download.</p></div>
+<div class="paragraph"><p>The direction is either <em>Upload</em> or <em>Download</em>, depending on whether the connection request is a ConnectToMe or ReverseConnectToMe.</p></div>
+<div class="paragraph"><p>The number is a random number (above 0), typically between 1 and 32767. If both clients want to download, the client with the highest number gets to start downloading first. If the numbers are equal, the connection is closed.</p></div>
+<div class="paragraph"><p>This command should be sent;</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+After a $Key command or
+</p>
+</li>
+<li>
+<p>
+After a $Lock command with EXTENDED information
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>I.e., if the $Lock is EXTENDED, $Direction MUST be sent after the $Lock command and not the $Key command.</p></div>
+<div class="paragraph"><p>Implementation note: The highest number DC++ sends is 32767 (2^15-1, 0x7FFF) as the Neo-Modus Direct Connect client will disconnect if it receives a higher number. Clients can send a higher value, in risk of losing compatibility.</p></div>
+<div class="paragraph"><p>Implementation note: A potential bug, that may be fixed, in DC++ revolved around the following circumstance;</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Client A has 0 free slots
+</p>
+</li>
+<li>
+<p>
+Client B has free slots (doesn&#8217;t matter how many)
+</p>
+</li>
+<li>
+<p>
+Client A and client B want a file from one another
+</p>
+</li>
+<li>
+<p>
+Client A loses the random number "battle"
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Client B will not get a slot because of client A does not have any slots available. DC++'s status bar of client B will say "Connecting&#8230;" instead of saying "No slots available" that is the de facto message. A suggested patch involve "cheating"; client B will use a high random number after it has lost and will return to normal when it has won.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_cancel">4.4.15. $Cancel</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Cancel</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used as way to indicate that the transfer of a file should be cancelled prematurely.</p></div>
+<div class="paragraph"><p>This command is sent by the downloader. When the uploader receives the message, it should stop sending data followed by a $Canceled. It is possible that some implementations continue to send some data after the $Cancel and $Canceled; the downloader should discard this data.</p></div>
+<div class="paragraph"><p>This command was only implemented in NMDC v.1 and not in subsequent version or in other clients.</p></div>
+<div class="paragraph"><p>Note that there is no pipe (|) at the end of this command!</p></div>
+</div>
+<div class="sect3">
+<h4 id="_canceled">4.4.16. $Canceled</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Canceled</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used as way to indicate that the transfer of a file was cancelled prematurely.</p></div>
+<div class="paragraph"><p>This command is sent by the uploader.</p></div>
+<div class="paragraph"><p>This command was only implemented in NMDC v.1 and not in subsequent version or in other clients.</p></div>
+<div class="paragraph"><p>The spelling of this command is not a mistake.</p></div>
+<div class="paragraph"><p>Note that there is no pipe (|) at the end of this command!</p></div>
+</div>
+<div class="sect3">
+<h4 id="_badpass">4.4.17. $BadPass</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$BadPass|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Indicates that the supplied password is invalid. The client shall be immediately disconnected after this message is sent.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_hubisfull">4.4.18. $HubIsFull</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$HubIsFull|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Indicates that the hub has reached its maximum amount of users and will not accept additional users.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_validatedenide">4.4.19. $ValidateDenide</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ValidateDenide nick|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>The requested nick name is already taken by or is reserved for another user. The spelling of this command is not a mistake.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$ValidateDenide john|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_maxedout">4.4.20. $MaxedOut</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MaxedOut|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>Sent by a client to another when there are no more slots available upon request of files.</p></div>
+<div class="paragraph"><p>See the QP extension for an extended $MaxedOut.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_failed">4.4.21. $Failed</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Failed message|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Client &#8594; Hub &#8594; Client, Client &#8594; Client, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>General purpose fail command. Implementations may use this command to signify files that are not available. $Failed is usually sent in response to a GetZBlock, UGetBlock and UGetZBlock.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_error">4.4.22. $Error</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Error message|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Client &#8594; Hub &#8594; Client, Client &#8594; Client, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>General purpose fail command. Implementations may use this command to signify files that are not available. $Failed is usually sent in response to a GetZBlock, UGetBlock and UGetZBlock.</p></div>
+<div class="paragraph"><p>When this command is sent in context of hub to client, and message equals to <em>CTM2HUB</em>, it means that client connection was made to a hub, and client must instantly stop trying to connect to address previously requested in CTM.</p></div>
+<div class="paragraph"><p>Example client request:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$ConnectToMe john 192.168.1.2:411|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Once client connects to 192.168.1.2:411, it receives $Error command:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$Error CTM2HUB|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Hub softwares currently known to support this command: Verlihub</p></div>
+</div>
+<div class="sect3">
+<h4 id="_search">4.4.23. $Search</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Search ip:port search_string|
+$Search Hub:nick search_string|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client</p></div>
+<div class="paragraph"><p>The former is sent by active clients and the latter for passive clients. The IP is the client&#8217;s own IP address and the port is an open UDP port that accept incoming UDP traffic. "Hub" should be taken literally. The nick is the nickname of the searching user.</p></div>
+<div class="sect4">
+<h5 id="_the_search_string">The search string</h5>
+<div class="paragraph"><p>The string describing the file or directory the client is searching for. It is made up of a question mark (<em>?</em>) delimited string as follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>size_restricted?is_max_size?size?data_type?search_pattern</code></pre>
+</div></div>
+<div class="paragraph"><p>size_restricted is <em>T</em> if the search should be restricted to files of a minimum or maximum size, otherwise <em>F</em>.</p></div>
+<div class="paragraph"><p>is_max_size is <em>F</em> if size_restricted is <em>F</em> or if the size restriction places a lower limit on file size, otherwise <em>T</em>.</p></div>
+<div class="paragraph"><p>size is the minimum or maximum size of the file to search for (according to is_max_size) if size_restricted is <em>T</em>, otherwise 0.</p></div>
+<div class="paragraph"><p>data_type restricts the search to files of a particular type. It is an integer selected from:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+1 - For any file type
+</p>
+</li>
+<li>
+<p>
+2 - For audio files
+</p>
+</li>
+<li>
+<p>
+3 - For compressed files
+</p>
+</li>
+<li>
+<p>
+4 - For document files
+</p>
+</li>
+<li>
+<p>
+5 - For executable files
+</p>
+</li>
+<li>
+<p>
+6 - For picture files
+</p>
+</li>
+<li>
+<p>
+7 - For video files
+</p>
+</li>
+<li>
+<p>
+8 - For folders
+</p>
+</li>
+<li>
+<p>
+9 - For TTH searching
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>search_pattern is used by other users to determine if any files match. If it is a TTH search, search_pattern should be "TTH:hash".</p></div>
+<div class="paragraph"><p>Spaces in the search pattern are replaced by a dollar sign <em>$</em>. [CHECK: "As with all NMDC messages, <em>$</em> and <em>|</em> are escaped with "$" and "|", with <em>&amp;</em> being further replaced with "&amp;"."]</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>Active search:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Search 192.168.1.5:412 T?T?500000?1?Gentoo$2005
+$Search Hub:SomeNick T?T?500000?1?Gentoo$2005</code></pre>
+</div></div>
+</div></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>Passive search:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Search 192.168.1.5:412 F?T?0?9?TTH:TO32WPD6AQE7VA7654HEAM5GKFQGIL7F2BEKFNA
+$Search Hub:SomeNick F?T?0?9?TTH:TO32WPD6AQE7VA7654HEAM5GKFQGIL7F2BEKFNA</code></pre>
+</div></div>
+</div></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sr">4.4.24. $SR</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$SR source_nick result free_slots/total_slots&lt;0x05&gt;hub_name (hubip[:port])[&lt;0x05&gt;target_nick]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client, Client &#8594; Client</p></div>
+<div class="paragraph"><p>Sent by a client when a match to a search is found.</p></div>
+<div class="paragraph"><p>If the $Search was a passive one, the $SR is returned via the hub connection (TCP). In this case, &lt;0x05&gt;target_nick must be included on the end of the $SR. The hub must strip the deliminator and &lt;target_nick&gt; before sending the $SR to target_nick. If the search was active, it is sent to the IP address and port specified in the $Search via UDP.</p></div>
+<div class="paragraph"><p>Result is one of the following:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+filename&lt;0x05&gt;filesize
+</p>
+</li>
+<li>
+<p>
+directoryname
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>File size shall be in bytes.</p></div>
+<div class="paragraph"><p>"&lt;0x05&gt;" used above for deliminators are the 5th character in the ASCII character set. The brackets should consequentially not be taken literally.</p></div>
+<div class="paragraph"><p>The port for the hub only needs to specified if its listening port is not the default (411).</p></div>
+<div class="paragraph"><p>On UNIX, the path delimiter / must be converted to \ for compatibility.</p></div>
+<div class="paragraph"><p>Implementations should send a maximum of 5 search results to passive users and 10 search results to active users.</p></div>
+<div class="paragraph"><p>Free_slots are the amount of available slots left. Total_slots are the total amount of slots.</p></div>
+<div class="paragraph"><p>For files containing TTH, the hub_name parameter is replaced with TTH:hash</p></div>
+<div class="paragraph"><p>Active result example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$SR User1 ponies.txt&lt;0x05&gt;437 3/4&lt;0x05&gt;Testhub (192.168.1.1:411)|
+$SR User5 images 0/4&lt;0x05&gt;Testhub (192.168.1.1:411)|
+$SR User6 pictures 0/4&lt;0x05&gt;Testhub (192.168.1.1)|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Passive result example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$SR User1 ponies.txt&lt;0x05&gt;437 3/4&lt;0x05&gt;Testhub (192.168.1.1:411)&lt;0x05&gt;User2|
+$SR User5 images 0/4&lt;0x05&gt;Testhub (192.168.1.1:411)&lt;0x05&gt;User2|
+$SR User6 pictures 0/4&lt;0x05&gt;Testhub (192.168.1.1)&lt;0x05&gt;User2|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_myinfo">4.4.25. $MyINFO</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MyINFO $ALL nick description$ $&lt;connection&gt;&lt;flag&gt;$mail$share_size$|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub (&#8594; Client)</p></div>
+<div class="paragraph"><p>This command is part of the Client-Hub Handshake and during login, and is sent after the client receive $Hello with their own nick. Client resend this on any change. It&#8217;s broadcasted to all clients.</p></div>
+<div class="paragraph"><p>The <em>&lt;</em> and <em>&gt;</em> use in here should not be taken literally; they are there to visually distinguish connection from flag. Consequently, the flag shall immediately follow the connection.</p></div>
+<div class="paragraph"><p>Connection is a string for the connection:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Default NMDC1 connections types: 28.8Kbps, 33.6Kbps, 56Kbps, Satellite, ISDN, DSL, Cable, LAN(T1), LAN(T3)
+</p>
+</li>
+<li>
+<p>
+Default NMDC2 connections types: Modem, DSL, Cable, Satellite, LAN(T1), LAN(T3)
+</p>
+</li>
+<li>
+<p>
+New connections types for NMDC2: 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 1000
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Later implementations also send other speeds. Implementations should simply display the value to the user and not create any inhibitions based on the reported speed.</p></div>
+<div class="sect4">
+<h5 id="_flag">Flag</h5>
+<div class="paragraph"><p>Flag is a ASCII character (8 bit byte).</p></div>
+<div class="paragraph"><p>There are multiple implementations of this byte.</p></div>
+<div class="paragraph"><p>The values listed here are the bits within the flag byte. The following is the original:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Bit </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Normal or no status.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">Away.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Server status. Used when the client has uptime &gt; 2 hours, &gt; 2 GB shared, upload &gt; 200 MB.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Fireball status. Used when the client has had an upload &gt; 100 kB/s.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The values listed here are the bits within the flag byte. Newer implementations change the numbers to be extensions of the original and are the following:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Bit </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">Support for TLS-encrypted client-client connections when TLS extension is supported.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Support for NAT-traversal client-client connections when NAT extension is supported.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Support for IPv4 when IP64 extension is supported.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Support for IPv6 when IP64 extension is supported.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The values listed here are decimal values. Other implementations interpreted this to be the following:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Decimal </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Normal status.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">Away status, used when the client has away status set.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Server status, used when the client has uptime &gt; 2 hours, &gt; 2 GiB shared, upload &gt; 200 MiB.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Fireball status, used when the client had an upload &gt; 100 KiB/s.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">TLS support, used when client supports TLS-encrypted connnections.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">NAT support, used when client supports NAT-traversal connnections.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">IPv4 support, used when client supports IPv4.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">128</p></td>
+<td align="left" valign="top"><p class="table">IPv6 support, used when client supports IPv6.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Example verification:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Flag calculation </th>
+<th align="left" valign="top">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x1</p></td>
+<td align="left" valign="top"><p class="table">Normal status</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x2</p></td>
+<td align="left" valign="top"><p class="table">Away status</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x4</p></td>
+<td align="left" valign="top"><p class="table">Server status</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x8</p></td>
+<td align="left" valign="top"><p class="table">Fireball status</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x10</p></td>
+<td align="left" valign="top"><p class="table">TLS support</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x20</p></td>
+<td align="left" valign="top"><p class="table">NAT support</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x40</p></td>
+<td align="left" valign="top"><p class="table">IPv4 support</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">if Flag &amp; 0x80</p></td>
+<td align="left" valign="top"><p class="table">IPv6 support</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_tag">Tag</h5>
+<div class="paragraph"><p>This addition to the description field was introduced to ease concerns by hub operators that DC++ users were joining too many hubs and not allowing enough uploads. (The original DC client only allowed users to join a single hub.) The tag is now the de facto standard.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>&lt;++ V:0.881,M:P,H:0/1/0,S:2&gt;</code></pre>
+</div></div>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+"++": indicates the client (in this case, DC++)
+</p>
+</li>
+<li>
+<p>
+"V": tells you the version number
+</p>
+</li>
+<li>
+<p>
+"M": tells if the user is in active (A), passive (P), or SOCKS5 (5) mode
+</p>
+</li>
+<li>
+<p>
+"H": tells how many hubs the user is on and what is his status on the hubs. The first number means a normal user, second means VIP/registered hubs and the last one operator hubs (separated by the forward slash [<em>/</em>]).
+</p>
+</li>
+<li>
+<p>
+"S": tells the number of slots user has opened
+</p>
+</li>
+<li>
+<p>
+"O": shows the value of the "Automatically open slot if speed is below xx KiB/s" setting, if non-zero
+</p>
+</li>
+<li>
+<p>
+The brackets <em>&lt;</em> and <em>&gt;</em> shall be taken literally.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Note that the IPv4/IPv6 extensions add additional data to the M. See the IPv4/IPv6 extensions for further information.</p></div>
+<div class="paragraph"><p>Example:
+Note that the example uses <em>0x31</em> for signaling the flag as <em>Normal</em>, for ease of display.</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$MyINFO $ALL johndoe &lt;++ V:0.881,M:P,H:0/1/0,S:2&gt;$ $1000x31$example@example.com$1234$\|</code></pre>
+</div></div>
+</div></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getinfo">4.4.26. $GetINFO</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$GetINFO &lt;other_nick&gt; &lt;nick&gt;|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Request (general) client information.</p></div>
+<div class="paragraph"><p>&lt;nick&gt; is this sending client&#8217;s nick.</p></div>
+<div class="paragraph"><p>&lt;other_nick&gt; is the nick of the user that <em>&lt;nick&gt;</em> wants to know about. The server must respond with exactly the $MyINFO command sent by <em>&lt;other_nick&gt;</em> to the hub.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$GetINFO peter john|</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_hello">4.4.27. $Hello</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Hello user|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>When a new user logs in, the hub will send this command to the new user to inform them that they have been accepted for hub entry.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_version">4.4.28. $Version</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Version version|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>Sent by clients to the hub after $Hello is received to denote the version used for the client. This command is nowadays not used to denote the client&#8217;s version but was used frequently by the original Neo-Modus Direct Connect (NMDC) client. The last version of the Neo-Modus client was 1.0091 and is what is commonly used by current clients. The default system locale is used, which means the period may be a comma etc.</p></div>
+<div class="paragraph"><p>Version is 1.0091 by default.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_hubname">4.4.29. $HubName</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$HubName name|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>The name of the hub that should be displayed by clients to users. The name is sometimes interpreted as the "topic" (current discussion topic or general theme of the hub), in cases where $HubTopic does not exist. The hub could send different names to different users, as well as the ability for multiple hubs (that are inherently separated) to have the same name, so the client should not use the hub name as a unique identifier.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_getnicklist">4.4.30. $GetNickList</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$GetNickList|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>Request that the hub send the nick names of all users that are connected.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_nicklist">4.4.31. $NickList</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$NickList nick$$nick2$$nick3[...]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Providing the full listing of users, including bots and operators. List is separated by "$$".</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$NickList john$$peter$$richard$$marie$$sarah|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_oplist">4.4.32. $OpList</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$OpList nick$$nick2$$nick3[...]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Providing the full listing of operators. This is a subset of the users provided in $NickList. List is separated by "$$".</p></div>
+<div class="paragraph"><p>The following should be sent if there are no operators online:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$OpList|</code></pre>
+</div></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$OpList john$$peter|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_kick">4.4.33. $Kick</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Kick victim|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Requests that the hub kicks a user (terminates the connection to the user). The hub will validate that the issuing user actually have permission to kick the other user. The message does not specify a reason to the kick; hubs may decide instead to send a default "you have been kicked" message. Time frame (of a potential ban) does not exist in the protocol, as it is decided by the hub&#8217;s configuration. It is up to the hub to decide the course of action if the user is not allowed to issue the kick, but the majority of implementations will simply ignore the message or send a message back ("you are not allowed to issue the command"). Many clients that issue the Kick command will precede the message with a message directed (either normal main chat or with $To) to the offended user with the reason for the kick.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_close">4.4.34. $Close</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Close victim|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Requests that the hub kicks a user (terminates the connection to the user), but no message will be sent to the victim client. All other information is similar to $Kick.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_opforcemove">4.4.35. $OpForceMove</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$OpForceMove $Who:victim$Where:address$Msg:reason|</code></pre>
+</div></div>
+<div class="paragraph"><p>A request made by privileged users to redirect a user from the hub. The message should be sent to the offending user in a main chat message or in a $To message.</p></div>
+<div class="paragraph"><p>victim is nick name of the victim.</p></div>
+<div class="paragraph"><p>address is the address to redirect to, abiding to the specified rules for URIs.</p></div>
+<div class="paragraph"><p>reason is why the redirect was issued.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$OpForceMove $Who:richard$Where:example.com:411$Msg:I think you&#8217;ll like this hub better|</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_forcemove">4.4.36. $ForceMove</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ForceMove address|</code></pre>
+</div></div>
+<div class="paragraph"><p>Informs the user that it should close its connection and instead connect to the address specified. Many implementations will send $ForceMove followed by a main chat message or a $To message.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$ForceMove example.com:411|
+$To:richard From: OpNick $&lt;peter&gt; You are being re-directed to example.com:411 because: I think you&#8217;ll like thus hub better.|</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_quit">4.4.37. $Quit</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Quit nick|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Inform users in a hub that <em>nick</em> has disconnected from the hub. If a user desire to disconnect from a hub, the client should simply terminate the connection and not send $Quit.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$Quit peter|</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_lock">4.4.38. $Lock</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Lock lock Pk=pk|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client, Client &#8594; Client</p></div>
+<div class="paragraph"><p>This is a mechanism to request 'certification' for verification. The lock is a command that added by NMDC to keep other clients (such as DC++) from being able to use NMDC hubs. The lock require a response (given in a $Key) that needs to be calculated, as per the lock&#8217;s data. Hubs are not required to check the validity of the response, but must still send it.</p></div>
+<div class="paragraph"><p>Note this command, and its use, are used for all connections.</p></div>
+<div class="paragraph"><p>This command should be the first to be sent in a client to hub connection. This command should be sent after both have used $MyNick in a client to client connection. Both clients (in a client to client connection) should send $Lock.</p></div>
+<div class="paragraph"><p>The lock data is a sequence of random characters, excluding space (' '), dollar sign ('$') and a pipe ('|').</p></div>
+<div class="paragraph"><p>Pk was originally intended for use with SSL/TLS keys for secure connections, but is not used by any implementation today. Some implementations send their name and version in this field.</p></div>
+<div class="paragraph"><p>Implementation note: In NMDC hub;</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Lock&#8217;s length varied from 46 to 115 characters
+</p>
+</li>
+<li>
+<p>
+Pk&#8217;s length was static with 16 characters.
+</p>
+</li>
+<li>
+<p>
+Lock&#8217;s characters varied from ASCII code point 37 to ASCII code point 122.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Example:
+See $Supports for the use of EXTENDED.</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881|</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Lock EXTENDEDPROTOCOL_NMDC_TLS_2903 Pk=Verlihub 1.5.0.0|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_key">4.4.39. $Key</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Key key|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Client &#8594; Client</p></div>
+<div class="paragraph"><p>The key is given as a response for a $Lock command, as calculated by the following algorithm.</p></div>
+<div class="paragraph"><p>The key has exactly as many characters as the lock. Except for the first, each key character is computed from the corresponding lock character and the one before it. If the first character has index 0 and the lock has a length of len then:</p></div>
+<div class="paragraph"><p>for (i = 1; i &lt; len; i++)
+{
+key[i] = lock[i] xor lock[i-1];
+}</p></div>
+<div class="paragraph"><p>The first key character is calculated from the first lock character and the last two lock characters:</p></div>
+<div class="paragraph"><p>key[0] = lock[0] xor lock[len-1] xor lock[len-2] xor 5</p></div>
+<div class="paragraph"><p>Next, every character in the key must be nibble-swapped:</p></div>
+<div class="paragraph"><p>for (i = 0; i &lt; len; i++)
+{
+key[i] = ((key[i]&lt;&lt;4) &amp; 240) | ((key[i]&gt;&gt;4) &amp; 15);
+}</p></div>
+<div class="paragraph"><p>Finally, the characters with the decimal ASCII values of 0, 5, 36, 96, 124, and 126 cannot be sent to the server. Each character with this value must be substituted with the string /%DCN000%/, /%DCN005%/, /%DCN036%/, /%DCN096%/, /%DCN124%/, or /%DCN126%/, respectively. The resulting string is the key to be sent to the server.</p></div>
+<div class="paragraph"><p>If your programming language of choice doesn&#8217;t have xor or shift operations on characters, convert them to integers. If it doesn&#8217;t have a bit shift at all, then x « y = x*(2y) and x » y = x/(2y) for all integers x and y (** is the exponent operation or “to the power of”). Be sure to use unsigned values everywhere and do not do sign extension. Shift operations always lose the high or low bit (they are not roll operations!). The &amp; (and) and | (or) operations are all logical, not boolean (eg. 6 &amp; 13 = 4, not 1).</p></div>
+<div class="paragraph"><p>When the hub connects to the hublist, it must undergo a similar Lock/Key negotiation. The &lt;key&gt; calculation is the same, but the special number 5 in the second step is replaced with the following value is not computed from the hub&#8217;s listening port, but rather the random outgoing port that the Winsock selects. localport: 1) &amp; 255</p></div>
+<div class="paragraph"><p>Note that the data sent should be in its raw form.</p></div>
+<div class="paragraph"><p>Example:
+Note that this (and every other) example uses '011010110110010101111001' as key, but it should be interpreted as a binary value.</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$Key 011010110110010101111001|</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_multiconnecttome">4.4.40. $MultiConnectToMe</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MultiConnectToMe remote_nick sender_ip:sender_port</code></pre>
+</div></div>
+<div class="paragraph"><p>This command is a client side command to take advantage of hub linking feature in the NeoModus Direct Connect Hub software. When a local client sends $MultiConnectToMe to the hub, it is forwarded on to every hub which is linked to by UDP, as in the $Search hub&lt;&#8594;hub protocol command.</p></div>
+<div class="paragraph"><p>This command is used in conjunction with $MultiSearch.</p></div>
+<div class="paragraph"><p>This support was problematic, as the NeoModus Direct Connect Hub did not provide a way to indicate that it was part of a link, and further did not provide the ability to broadcast joins and parts of remote users. Some implementations would send $MultiConnectToMe commands even when the remote user was offline.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$MultiConnectToMe peter 192.168.0.138:19346</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_multisearch">4.4.41. $MultiSearch</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MultiSearch ip:port search_string|</code></pre>
+</div></div>
+<div class="paragraph"><p>This command is a client side command to take advantage of hub linking feature in the NeoModus Direct Connect Hub software. When a local client sends $MultiSearch to the hub, it is forwarded on to every hub which is linked to by UDP, as in the $Search hub&lt;&#8594;hub protocol command.</p></div>
+<div class="paragraph"><p>This command is used in conjunction with $MultiConnectToMe.</p></div>
+<div class="paragraph"><p>For syntax on the parameters, see $Search.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extensions_commands">4.5. Extensions (commands)</h3>
+<div class="sect3">
+<h4 id="_botlist">4.5.1. $BotList</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$BotList nick$$nick2$$nick3[...]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>Providing the full listing of bots. This is a subset of the users provided in $NickList. List is separated by "$$".</p></div>
+<div class="paragraph"><p>Add BotList to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$BotList marie|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_adcget">4.5.2. $ADCGET</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ADCGET type identifier start_pos bytes flag0...flagN|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This is a port of the ADC approach of signifying the request. &lt;start_pos&gt; counts 0 as the first byte. &lt;bytes&gt; may be set to -1 to indicate that the sending client should fill it in with the number of bytes needed to complete the file from &lt;start_pos&gt;. &lt;type&gt; is a [a-zA-Z0-9]+ string that specifies the namespace for identifier and clients should recognize the type "file".</p></div>
+<div class="paragraph"><p>"file" transfers transfer the file data in binary, starting at &lt;start_pos&gt; and sending &lt;bytes&gt; bytes. Identifying must come from the namespace of the current hash.</p></div>
+<div class="paragraph"><p>flag0&#8230;flagN is a reference to the fields in ADC&#8217;s GET command. Fields available for GET can also be added here in the same way as in ADC.</p></div>
+<div class="paragraph"><p>Add ADCGet to the $Supports to indicate support for this. Support for ADCGet imply support for both $ADCGET and $ADCSND.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_adcsnd">4.5.3. $ADCSND</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ADCSND type identifier start_pos bytes|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This is used as a way to specify that the file should be sent. The uploader should proceed to stream the amount of bytes requested previously.</p></div>
+<div class="paragraph"><p>This is a port of the ADC approach of signifying sending. The parameters correspond to the ADCGET parameters except that if &lt;bytes&gt; equals -1 it must be replaced by the number of bytes needed to complete the file starting at &lt;start_pos&gt;.</p></div>
+<div class="paragraph"><p>Add ADCGet to the $Supports to indicate support for this. Support for ADCGet imply support for both $ADCGET and $ADCSND.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_userip">4.5.4. $UserIP</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserIP nick|
+$UserIP nick ip|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>A client may request IP address information about clients. The hub will respond with a command with the same name, but with different parameter data.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Client </th>
+<th align="left" valign="top">Server</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">$UserIP johndoe|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$UserIP johndoe 192.168.1.2|</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_userip_extension">4.5.5. $UserIP extension</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserIP nick1 IP1$$nick2 IP2[...]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>This is similar to the other $UserIP command, except that there is no request. The hub will, if the client signals support for UserIP2, send all users upon login.</p></div>
+<div class="paragraph"><p>The list consist of each user and their IP, including the connecting client. The hub should send each new client&#8217;s IP when they login.</p></div>
+<div class="paragraph"><p>Note that $$ is used as delimiter.</p></div>
+<div class="paragraph"><p>Add UserIP2 to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Client </th>
+<th align="left" valign="top">Server</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$UserIP johndoe 192.168.1.2$$janedoe 192.168.1.3|</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_botinfo">4.5.6. $BotINFO</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$BotINFO description|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>Bot description can be any string, usually information regarding, and address of, the hublist.</p></div>
+<div class="paragraph"><p>Add BotINFO to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_hubinfo">4.5.7. $HubINFO</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$HubINFO name$address:port$description$max_users$min_share$min_slots$max_hubs$hub_type$hubowner_login$hub_category$char_encoding|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Pinger</p></div>
+<div class="paragraph"><p>Hub name, address and description are the items which will be shown in the hublist (some hubs have multiple addresses and this helps to get primary address). Description changes often on some hubs so this helps with updating it.</p></div>
+<div class="paragraph"><p>Max users, min share, min slots and maximum number of open hubs for the client helps users to find suitable hubs.</p></div>
+<div class="paragraph"><p>Hub type gives information about the hub software and script which gave the information.</p></div>
+<div class="paragraph"><p>Hubowner login is meant to help hubowners to edit information about their hub directly from the hublist portal. It is usually an email address where the account/password information should be sent.</p></div>
+<div class="paragraph"><p>Hub category provides information about hub categorization such as Public, Private, Chatonly, Failover and Redirect.</p></div>
+<div class="paragraph"><p>Character encoding provides information about character encoding currently used on hub, this helps a hublist to display correctly encoded hub information such as hub name, description, $MyINFOs, when converting texts to UTF-8.</p></div>
+<div class="paragraph"><p>Known encodings are: CP1250, CP1251, CP1252, CP1253, GB18030 and UTF-8.</p></div>
+<div class="paragraph"><p>If the hub address is 127.0.0.1, a hublist pinger will/is supposed to remove the hub from its database.</p></div>
+<div class="paragraph"><p>Add HubINFO to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_hubtopic">4.5.8. $HubTopic</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$HubTopic topic|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>The hub topic, be it current discussion topic or general theme of the hub, which allow users to quickly see what the discussion and file sharing themes are. Hub pingers frequently use this message for hub related information.</p></div>
+<div class="paragraph"><p>Add HubTopic to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_supports">4.5.9. $Supports</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Supports extension1 extension2 [...]|
+$Supports extension1 extension2 [...] |</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Hub &#8594; Client, Client &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used to negotiate and notify about protocol extensions.</p></div>
+<div class="paragraph"><p>If a client or hub implements an extension, the $Lock command MUST start with 'EXTENDEDPROTOCOL'.</p></div>
+<div class="paragraph"><p>This command MUST be sent before $Key.</p></div>
+<div class="paragraph"><p>Implementations should only send extension specific messages if the other party has signaled support for it.</p></div>
+<div class="paragraph"><p>There must be at least 1 (one) supported extension.</p></div>
+<div class="paragraph"><p>For client extensions, the extension name should be the same as the command name.</p></div>
+<div class="paragraph"><p>Note that DC++ 0.XXX added a space after the last extension. I.e., the first form is the original implementation of $Supports.</p></div>
+<div class="paragraph"><p>Example:
+The following example signals support for 7 (seven) different extensions. See corresponding command/extension for description.</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$Supports UserCommand NoGetINFO NoHello UserIP2 TTHSearch ZPipe0 GetZBlock|</p></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_capabilities">4.5.10. Capabilities</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Capabilities [unknown]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>This command is used to negotiate and notify about protocol extensions, similar to the more popular $Supports. Its content is unknown as of date.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_in">4.5.11. IN</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$IN nick$data[$data]|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>This command is designed to replace the static $MyINFO. This command consist of separate smaller parts which all have a 1-byte identifier and are separated by a dollar sign (<em>$</em>).</p></div>
+<div class="paragraph"><p>If a client wishes to remove a part of its $IN (say for example its description), it must send this parts identifier immediatly followed by the dollar sign ($), indicating it is empty.</p></div>
+<div class="paragraph"><p>The order in which parts are sent is free to choose, but tag parts should be grouped together.</p></div>
+<div class="paragraph"><p>Add IN to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>This command deprecates $OpList and $BotList.</p></div>
+<div class="paragraph"><p>A client tag has only one identiifer indicating it is concerning the tag, but all parts of this tag also have their own 1-byte identifier. In the tag, the parts are delimited with a space (' ').</p></div>
+<div class="paragraph"><p>The data consist of two elements: identifier and its data.</p></div>
+<div class="paragraph"><p>The following table lists the identifiers:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Identifier (character code) </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">D (68)</p></td>
+<td align="left" valign="top"><p class="table">Description</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">T (84)</p></td>
+<td align="left" valign="top"><p class="table">Tag</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">C (67)</p></td>
+<td align="left" valign="top"><p class="table">Connection</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">F (70)</p></td>
+<td align="left" valign="top"><p class="table">Status flag</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">E (69)</p></td>
+<td align="left" valign="top"><p class="table">E-mail address</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">S (83)</p></td>
+<td align="left" valign="top"><p class="table">Share size in bytes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$IN john$Dmy_new_description|
+$IN john$S1024|
+$IN john$S1024$$Dmy_new_description|</p></div>
+</div></div>
+<div class="paragraph"><p>The tag has the following identifiers in the data:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Identifier (character code) </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">c (99)</p></td>
+<td align="left" valign="top"><p class="table">Client</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">v (118)</p></td>
+<td align="left" valign="top"><p class="table">Version</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">m (109)</p></td>
+<td align="left" valign="top"><p class="table">Mode</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">h (104)</p></td>
+<td align="left" valign="top"><p class="table">Hub count, x/y/z (where x is the number of hubs as a normal user, y as the number of hubs as registered and z as the number of hubs as operator)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">s (115)</p></td>
+<td align="left" valign="top"><p class="table">Slots</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">f (102)</p></td>
+<td align="left" valign="top"><p class="table">Free slots</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">l (108)</p></td>
+<td align="left" valign="top"><p class="table">Bandwidth limit (L: and B: in $MyINFO)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">o (111)</p></td>
+<td align="left" valign="top"><p class="table">O: in $MyINFO</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">r (114)</p></td>
+<td align="left" valign="top"><p class="table">R: in $MyINFO</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Tag identifiers are separated by a space (' ').</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p>$IN john$Ts3|
+$IN john$Tc++ v0.666|</p></div>
+</div></div>
+<div class="paragraph"><p>The status is a 32-bit integers where the bits are according to the following table:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Bit </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Default value</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">User is away</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">USer is server</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">User is fireball</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">User is OP</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Client is a bot</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Client is in DND mode</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Client support encryption</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Client supports partial search</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Bit 5 and Bit 6 of the 32-bit status flag are used to indicate wether a user is an OP or wether the $IN string send by the hubsoft belongs to a bot. These values are read-only and should never be changed by a client. The hubsoft must disconnect for this. If a client connects and has successfully logged in with the correct password, the hubsoft will set bit 5 of the status flag and sends this part to all connected users, including the newly connected OP. The connecting client must save the status flag it received from the hub and use it when updating status such as away and fireball. However, as said, it is not allowed to set or reset bit 5 and bit 6 of the status flag.</p></div>
+<div class="paragraph"><p>Bit 7 of the 32-bit status flag indicates if the client is in DND-mode (Do-Not-Disturb). Unlike Away mode, this mode will prevent the client to receive any pm&#8217;s. Clients are responsible themselves for setting/resetting this bit. Once this bit is set, and the hub receives a $To: string for a client in DND-mode, the hub must ignore the $To and reply to the sender with a message that the receiver is in DND-Mode. A client having this bit set, should automatically reset this bit when sending a pm itself. Ideally, newer clients supporting IN, may prevent themselves from sending $To strings to other clients having this bit set. The hub will always have the last the say in forwarding a PM or not. $To strings generated by the hubsoft to the client are not included in this and will be send regardlessly of status ( i.e. messages from bots ).</p></div>
+</div>
+<div class="sect3">
+<h4 id="_mcto">4.5.12. MCTo</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MCTo: target $sender message|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>This is a private-message to a single user that should be displayed as an ordinary chat-message.</p></div>
+<div class="paragraph"><p>Add MCTo to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>target is the client nick that should receive the message.</p></div>
+<div class="paragraph"><p>sender is the client nick that is the sender</p></div>
+<div class="paragraph"><p>message is the actual message.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$MCTo john $peter Cats are cute|
+$MCTo peter $john I like dogs|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_nickchange">4.5.13. $NickChange</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$NickChange old_nick new_nick|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>This allow a client to change the nick without logging out and logging back in.</p></div>
+<div class="paragraph"><p>old_nick is the old user nick.</p></div>
+<div class="paragraph"><p>new_nick is the new user nick.</p></div>
+<div class="paragraph"><p>Add NickChange to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>The client will have to update its own $MyINFO string and user list.</p></div>
+<div class="paragraph"><p>The hub will will send $ClientNick to the client to validate that the change is done. To all other users, a $Quit old_nick will be sent and a $MyINFO $ALL of the user with the new nick.</p></div>
+<div class="paragraph"><p>If the user is an operator, $OpList will be updated appropriately as well.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_clientnick">4.5.14. $ClientNick</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ClientNick new_nick|</code></pre>
+</div></div>
+<div class="paragraph"><p>This validates that the hub has acknowledged the change of nick during runtime that was initiated by $NickChange.</p></div>
+<div class="paragraph"><p>new_nick is the new user nick.</p></div>
+<div class="paragraph"><p>Add ClientNick to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_featurednetworks">4.5.15. FeaturedNetworks</h4>
+<div class="paragraph"><p>$FeaturedNetworks is a protocol extension of the APN MultiHubChatsystem to identify the different hubs and other entry points (IRC, Telnet) etc. It was primarily created to aid APN developers and to allow a better integration of multi hub chat systems.</p></div>
+<div class="paragraph"><p>Messages coming through the chat network are prefixed with an unique network node (entry point) identifier, normally three characters long. The central point of the chat network is a single hub that collects chat messages from one entry point and sends them back all other entry points.</p></div>
+<div class="paragraph"><p>Add FeaturedNetworks to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Syntax</p></div>
+<div class="paragraph"><p>An APN MultiHubChat message normally has this format:</p></div>
+<div class="paragraph"><p>&lt;(YYY)XXXXX&gt; MMMMMMM|Where YYY is the entry point prefix, XXXXX is the username and MMMMMMM is the message.</p></div>
+<div class="paragraph"><p>To allow the different entry point handlers to identify which messages are coming from other multi hub chat entry points, there is a command send by the hub after login called FeaturedNetworks:</p></div>
+<div class="paragraph"><p>$FeaturedNetworks YYYYYY$YYY|YYY stands for one entry point to the chat network. In the biggest currently running instance of the APN MultiHubChat system, five or more different prefixes are used.</p></div>
+<div class="sect4">
+<h5 id="_implementation">Implementation</h5>
+<div class="paragraph"><p>If implemented, this command could be sent from one of the entry point hubs aswell to aid the client in distinguishing user set prefixes ([BBB], [psv], (FUG) etc..) from network prefixes, and can be used by bots to detect prefix abuse.</p></div>
+<div class="paragraph"><p>The prefixes are to be defined by the network administrator. In the biggest running instance of the network however, the following prefixes are used by several MHC plugins for the different entry points:</p></div>
+<div class="paragraph"><p>• APx - Hub x (DC, where x is Â¹,Â³ or Â²).</p></div>
+<div class="paragraph"><p>• APt - Telnet Access (Telnet Chat Plugin)</p></div>
+<div class="paragraph"><p>• IRC - IRC Access (IRC plugin)</p></div>
+<div class="paragraph"><p>• APs - Shoutcast (Shoutcast Announcer Plugin)</p></div>
+<div class="paragraph"><p>$FeaturedNetworks can be implemented by virtually any hub by either using the MHC bot or by injecting it into the server ? client stream using a textfile (like a MOTD).</p></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_z">4.5.16. $Z</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Z blob|</code></pre>
+</div></div>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>This command&#8217;s intention is to compress (with ZLib) data to decrease bandwidth use. The blob uncompressed is one or more commands, e.g. a $Search followed by a $MyINFO.</p></div>
+<div class="paragraph"><p>Add ZLine to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>The command adds an escaping sequence:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Character </th>
+<th align="left" valign="top">Escape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">\</p></td>
+<td align="left" valign="top"><p class="table">\\</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">|</p></td>
+<td align="left" valign="top"><p class="table">\P</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_zon">4.5.17. $ZOn</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$ZOn blob|</code></pre>
+</div></div>
+<div class="paragraph"><p>This command&#8217;s intention is to compress (with ZLib) data to decrease bandwidth use. The blob uncompressed is one or more commands, e.g. a $Search followed by a $MyINFO.</p></div>
+<div class="paragraph"><p>Compression algorithm shall be LZ77.</p></div>
+<div class="paragraph"><p>The end of the block is an EOF.</p></div>
+<div class="paragraph"><p>Add ZPipe0 to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>The command adds no escaping.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_getzblock">4.5.18. $GetZBlock</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UGetBlock start bytes filename|</code></pre>
+</div></div>
+<div class="paragraph"><p>start is the 0-based (yes, 0-based, not like get that&#8217;s 1-based) starting index of the file used</p></div>
+<div class="paragraph"><p>bytes is the number of bytes to send</p></div>
+<div class="paragraph"><p>filename is the filename.</p></div>
+<div class="paragraph"><p>The other client then responds "$Sending &lt;bytes&gt;|&lt;compressed data&gt;", if the sending is ok or "$Failed &lt;errordescription&gt;|" if it isn&#8217;t.</p></div>
+<div class="paragraph"><p>If everything&#8217;s ok, the data is sent until the whole uncompressed length has been sent. <em>bytes</em> specifies how many uncompressed bytes will be sent, not compressed, as the sending client doesn&#8217;t know how well the file will compress. $Sending is  needed to be able to distinguish the failure command from file data. Only  one roundtrip is done for each block though, minimizing the need for maintaining states.</p></div>
+<div class="paragraph"><p>Compression: Compression is done using ZLib (v 1.1.4 in DC++ 0.21&#8217;s case),
+using dynamic compression level. The compression level can of course be
+changed by the implementator to reduce CPU usage, or even just store
+compression in the case of non-compressible files, which then works as
+adler32 check of the transferred data.</p></div>
+<div class="paragraph"><p>Support of $GetZBlock also implies support for $UGetZBlock.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_ugetblock">4.5.19. $UGetBlock</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UGetBlock start bytes filename|</code></pre>
+</div></div>
+<div class="paragraph"><p>This is the same command as $GetZBlock except this command is uncompressed and the filename is UTF-8 encoded.</p></div>
+<div class="paragraph"><p>The filename is encoded as UTF-8, which allows filenames to use characters that are not in the system&#8217;s encoding. $UGetBlock must be implemented if XmlBZList is advertised.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_ugetzblock">4.5.20. $UGetZBlock</h4>
+<div class="paragraph"><p>This is the same as $UGetBlock except that the stream is compressed.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_gettestzblock">4.5.21. $GetTestZBlock</h4>
+<div class="paragraph"><p>This command is deprecated and was a test command during the development of $GetZBlock. Implementations should not use this command.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_sending">4.5.22. $Sending</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$Sending diff|</code></pre>
+</div></div>
+<div class="paragraph"><p>Diff is the difference between the end byte and start byte. If the requested bytes was -1 then diff should be omitted.</p></div>
+<div class="paragraph"><p>This is sent as a response to $GetZBlock, $UGetBlock and $UGetZBlock.</p></div>
+<div class="paragraph"><p>The start and end byte are 0-based; the first byte of a file is assumed to be the byte number 0.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_clientid">4.5.23. $ClientID</h4>
+<div class="paragraph"><p>Add ClientID to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_getcid">4.5.24. $GetCID</h4>
+<div class="paragraph"><p>Add ClientID to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_usercommand">4.5.25. $UserCommand</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserCommand type context details|</code></pre>
+</div></div>
+<div class="paragraph"><p>Add UserCommand to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>type is a positive integer describing the kind of command:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Value </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">0</p></td>
+<td align="left" valign="top"><p class="table">Separator</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Raw</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">Raw nick limited (same as raw with the exception that it should only be used once per %[nick])</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">255</p></td>
+<td align="left" valign="top"><p class="table">Erase all previously sent commands</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>context is a integer that controls which contexts the menus will be shown. The value is derived by logical OR of the following values;</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Value </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Hub context</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">User context</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Search context</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">File list</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>details differ depending on the type.</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Type </th>
+<th align="left" valign="top">Detail information</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">0 and 255</p></td>
+<td align="left" valign="top"><p class="table">Leave this field empty</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1 and 2</p></td>
+<td align="left" valign="top"><p class="table">Detail should be <em>title$command</em>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_escaping">Escaping</h5>
+<div class="paragraph"><p>Escaping of dollar and pipe is necessary for the &lt;command&gt; in <em>'raw</em>' mode. The DC++ escape sequence will be used. i.e. &#124; for pipe, &#36; for dollar and &amp; for the ampersand. Escaping is used for all fields before they are sent to the hub / shown to the user. As with all NMDC commands, they must be terminated by the pipe character</p></div>
+</div>
+<div class="sect4">
+<h5 id="_details_separator">Details: Separator</h5>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserCommand 0 &lt;context&gt;|</code></pre>
+</div></div>
+<div class="paragraph"><p>Will add a menu separator (vertical bar) to the specified contexts (&lt;context&gt;). It is legal to add text (after the space) before the pipe, but it won''t be used (yet).</p></div>
+</div>
+<div class="sect4">
+<h5 id="_details_raw">Details: Raw</h5>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserCommand 1 &lt;context&gt; &lt;title&gt;$&lt;raw&gt;|</code></pre>
+</div></div>
+<div class="paragraph"><p>Will add a raw menu item with title &lt;title&gt; with command &lt;raw&gt;. This command must end with a &#124;, if not it should be discarded. The raw command may be used to specify multiple commands to be sent to the hub.</p></div>
+</div>
+<div class="sect4">
+<h5 id="_details_raw_nick_limited">Details: Raw nick limited</h5>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserCommand 2 &lt;context&gt; &lt;title&gt;$&lt;raw&gt;|</code></pre>
+</div></div>
+<div class="paragraph"><p>Is exactly the same as Raw, except that the command should only be run once per %[nick]. This is to prevent the client from sending out more than one message that disconnects someone. Generally, this is only useful in the User-File context (e.g. viewing Search Results) where it is possible to select one user multiple times.</p></div>
+</div>
+<div class="sect4">
+<h5 id="_details_erase">Details: Erase</h5>
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserCommand 255 &lt;context&gt;|</code></pre>
+</div></div>
+<div class="paragraph"><p>Will erase all commands that the hub has sent previously. This is for hubs/scripts that allow for updates while running. The erase all is intentional, keeping it simple. Note that contexts must still be used, and that erasing will remove all commands that match any of those ORed contexts (i.e. 7 will remove commands previously sent with any context of 1 through 7) but only from that context</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$UserCommand 2 6 Kick$&amp;#36;To: %[nick] From: %[mynick] &amp;#36;&lt;%[mynick]&gt; You are being kicked====|&amp;#36;Kick %[nick]&amp;#124;|
+$UserCommand 255 1|</code></pre>
+</div></div>
+</div></div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extensions_features">4.6. Extensions (features)</h3>
+<div class="sect3">
+<h4 id="_nohello">4.6.1. NoHello</h4>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>This indicates that the client doesn&#8217;t need either $Hello or $NickList to be sent to it when connecting to a hub. To populate its user list, a $MyINFO for each user is enough. $Hello is still accepted, for adding bots to the user list. DC++ still sends a $GetNickList to indicate that it is interested in the user list. During login, hubs must still send $Hello after $ValidateNick to indicate that the nick was accepted.</p></div>
+<div class="paragraph"><p>Add NoHello to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_chatonly">4.6.2. ChatOnly</h4>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
+<div class="paragraph"><p>This indicates that the client only support chat capabilities to allow the client to bypass hub rules (that relate to file sharing). The client should be disconnected if it sends a $Search, $ConnectoMe or $RevConnect.</p></div>
+<div class="paragraph"><p>Add ChatOnly to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_quicklist">4.6.3. QuickList</h4>
+<div class="paragraph"><p>The terms NDC and NHUB are used to denote a client or hub not featuring QuickList and QDC and QHUB for those that do. The term DC is used when the type is not yet established or of no importance. EACH and ALL signals that a message is sent N times, one message for each connected user. Also note that the terms IF, MAY, SHOULD and MUST, have the same meaning as in the internet RFC specs.
+Walkthrough
+Connecting</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">A DC connects to QHUB and does nothing</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB sends $Lock which starts with EXTENDEDPROTOCOL</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB also sends $HubName</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">A DC must send $Key</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">A DC may also send $Supports QuickList| to signal in is in fact a QDC</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB responds with $Supports QuickList|</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Identification</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">A QDC may but should not send $Version</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">A QDC must send $MyINFO</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Authentication</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB may send $GetPass</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QDC responds with $MyPass</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB may send $BadPass and disconnect</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB may send $ValidateDenide and disconnect</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Acceptance</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB may send $LogedIn to signal that H: should not be incremented</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB sends all clients MyINFO to the QDC</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB sends $OpList to the QDC</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB may send $Hello to all clients but should send it to non QDC only</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">QHUB sends $MyINFO to all QDC clients</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>Explanation
+Connecting
+This part has been through some changes. There was an argument of having the client start with $Supports and then having the hub respond to that. Having the client start with $Supports as a response to EXTENDEDPROTOCOL is in a sense much cleaner.</p></div>
+<div class="paragraph"><p>•   It has been found that $HubName can be sent pretty much at any time. Typically done in conjunction with $Lock.</p></div>
+<div class="paragraph"><p>•   $Supports are in the same format as in the client protocol; <em>'$Supports &lt;feat1&gt; &lt;feat2&gt; &lt;feat3&gt;&#124;</em>'</p></div>
+<div class="paragraph"><p>Identification</p></div>
+<div class="paragraph"><p>•   sending $MyPass early has been removed from the spec.</p></div>
+<div class="paragraph"><p>Authentication</p></div>
+<div class="paragraph"><p>•   As previously mentioned $GetPass is only sent if the user has an account and the $MyPass was not sent in the identification process. $BadPass or $ValidateDenide is sent when proper as usual.</p></div>
+<div class="paragraph"><p>Acceptance</p></div>
+<div class="paragraph"><p>From testing it has been found that $Hello and $MyINFO can be sent together without having to wait for a $GetINFO.</p></div>
+<div class="paragraph"><p>•   Let the hub decide if the account should be treated as a VIP, i.e. not increment H: in the tag, hence it is not mandatory for accounts. A QDC should only respond to this message for account logins only.</p></div>
+<div class="paragraph"><p>•   $OpList was missing.</p></div>
+<div class="paragraph"><p>Commands Sent</p></div>
+<div class="paragraph"><p>Connecting
+•   $Lock
+•   $HubName
+•   $Supports</p></div>
+<div class="paragraph"><p>Identification</p></div>
+<div class="paragraph"><p>Authentication
+•   $GetPass
+•   $BadPass
+•   $ValidateDenide</p></div>
+<div class="paragraph"><p>Acceptance
+•   $LogedIn
+•   $MyINFO
+•   $MyINFO stream</p></div>
+<div class="paragraph"><p>Connected
+•   $To
+•   $Search
+•   $SR
+•   $ConnectToMe
+•   $RevConnectToMe
+•   $ForceMove</p></div>
+<div class="paragraph"><p>Commands Accepted</p></div>
+<div class="paragraph"><p>Messages that a QHUB listens to in each state, QHUB ignores otherwise;</p></div>
+<div class="paragraph"><p>Connecting
+•   $Key
+•   $Supports</p></div>
+<div class="paragraph"><p>Identification
+•   $Version
+•   $MyINFO</p></div>
+<div class="paragraph"><p>Authentication
+•   $MyPass</p></div>
+<div class="paragraph"><p>Acceptance</p></div>
+<div class="paragraph"><p>Connected
+•   $GetNickList
+•   $MyINFO
+•   $To
+•   $Search
+•   $SR
+•   $ConnectToMe
+•   $RevConnectToMe
+•   $Kick
+•   $OpForceMove</p></div>
+<div class="paragraph"><p>Notes
+• $ValidateNick deprecated and ignored
+• $GetNickList only valid when connected, a QDC does not receive a $NickList, but a series of $MyINFOs directly.
+• $Hello deprecated and ignored
+• $GetINFO deprecated and ignored
+• $MyINFO is always accepted as valid and denotes a new or updated client.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_tthsearch">4.6.4. TTHSearch</h4>
+<div class="paragraph"><p>This indicates that the client support searching for queued files by TTH. See $Search for details.</p></div>
+<div class="paragraph"><p>Add TTHSearch to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_xmlbzlist">4.6.5. XmlBZList</h4>
+<div class="paragraph"><p>Usage: Supporing this means supporting utf-8 XML file lists with the
+following general structure:</p></div>
+<div class="paragraph"><p>&lt;FileList Version="1" Generator="dc client name and version"&gt;
+ &lt;Directory Name="xxx"&gt;
+  &lt;Directory Name="yyy"&gt;
+   &lt;File Name="zzz" Size="1"/&gt;
+  &lt;/Directory&gt;
+ &lt;/Directory&gt;
+&lt;/FileList&gt;</p></div>
+<div class="paragraph"><p>In each directory, including the root, the name of the entity must be
+case-insensitive unique in that level of the hierarchy.</p></div>
+<div class="paragraph"><p>Other fields may be added as necessary. DC++ for instance adds the
+TTH attribute to each file it knows the TTH root of in base32 encoding.</p></div>
+<div class="paragraph"><p>The file list is available as "files.xml.bz2" (vs MyList.DcLst), and is
+compressed using bzip2.</p></div>
+<div class="paragraph"><p>To retrieve unicode files from the file list, the client may also support
+the above GetZBlock and its utf-8 derivatives.  Support for XmlBZList
+implies support for $UGetBlock, so files are guaranteed to be retrievable.</p></div>
+<div class="paragraph"><p>$UGetBlock follows $UGetZBlock semantics, but without compressing
+the data. The &lt;bytes&gt; parameter of $Sending specifies how many bytes
+will be sent.</p></div>
+<div class="paragraph"><p>Don&#8217;t touch Version. Add your own, with a different name, if you feel
+compelled.</p></div>
+<div class="paragraph"><p>Don&#8217;t trust Generator to determine features of the file list. It&#8217;s there
+mainly for debugging and informative purposes.</p></div>
+<div class="paragraph"><p>Add XmlBZList to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>DC<code> supported the feature XMLBZList and the commands $GetBlock, $UGetBlock and $UGetZBlock in versions 0.307 to 0.695. DC</code> dropped support for the commands in version 0.696, whilst not removing the feature announcement. I.e., DC++ signals in the $Supports XMLBzList while it does not support the actual commands.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_minislots">4.6.6. Minislots</h4>
+<div class="paragraph"><p>This allows the other client to use a free slot for small files / file list.</p></div>
+<div class="paragraph"><p>$Supports is needed because the Neo-Modus DC client closes the file list browser when the connection is broken, which it becomes when the client on the other side tries to download its first file and fails because it has no real slot.</p></div>
+<div class="paragraph"><p>Add Minislots to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_tthl">4.6.7. TTHL</h4>
+<div class="paragraph"><p>Supporting this means supporting the upload of tth leaf data. Instead
+of transfering the file itself, the TTH data of all leaves is transferred
+in binary. The size transferred back is the number of bytes of leaf data,
+from this and the file size the receiving client can calculate which
+level (tree depth) the sending client is offering. The receiver should
+obviosly check that the received leaf data is correct by rebuilding the
+tree and checking that it&#8217;s recorded root matches.</p></div>
+<div class="paragraph"><p>Add TTHL to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_tthf">4.6.8. TTHF</h4>
+<div class="paragraph"><p>Supporting this means supporting file identification by TTH root. This
+means supporting downloads by TTH root instead of share directory and
+name. The advantage is that moved files can still be found by the
+downloader without requeuing the file.</p></div>
+<div class="paragraph"><p>The extension adds a namespace "TTH" before the ADC file root. A TTHF
+filename has the following syntax:</p></div>
+<div class="paragraph"><p>TTH/&lt;TTH root in base32, 192 binary bits&gt;</p></div>
+<div class="paragraph"><p>i e the TTH namespace consists of TTH root values directly under the
+"TTH/" root.</p></div>
+<div class="paragraph"><p>The naming scheme is valid in all types (i e also for getting TTH leaves)</p></div>
+<div class="paragraph"><p>Add TTHF to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_tths">4.6.9. TTHS</h4>
+<div class="paragraph"><p>Contexts: Client &#8594; Hub, Hub &#8594; Client</p></div>
+<div class="paragraph"><p>TTHS stands for short TTH search.</p></div>
+<div class="paragraph"><p>Example active search request:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>(new command)
+$SA LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ 192.168.1.2:412|
+(old command)
+$Search 192.168.1.2:412 F?T?0?9?TTH:LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ|
+(60 vs 76 bytes)</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Example passive search request:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>(new command)
+$SP LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ john|
+(old command)
+$Search Hub:john F?T?0?9?TTH:LWPNACQDBZRYXW3VHJVCJ64QBZNGHOHHHZWCLNQ|
+(49 vs 69 bytes)</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Meaning of this extension is to save some server upload bandwidth by shortening down the most frequently used search command. Here are some statistics regarding these commands comparing to old fashion commands:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>[*] $Search: 344579
+[*] $Search Hub: 379696
+[*] $SA: 243379
+[*] $SP: 292746</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[*] Total upload: 127.32 GB [395.34 KB/s]
+[*] Upload saved with ZLib: 44.52 GB
+[*] Upload saved with TTHS: 6.29 GB</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p><strong>Note</strong>: Not to be confused with TTHSearch extension.</p></div>
+<div class="paragraph"><p>Add TTHS to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Hub softwares currently known to support this extension: Verlihub</p></div>
+</div>
+<div class="sect3">
+<h4 id="_zlig">4.6.10. ZLIG</h4>
+<div class="paragraph"><p>Supporting this means that zlib compressed $ADCGET transfers are supported.</p></div>
+<div class="paragraph"><p>Add ZLIG to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_actm">4.6.11. ACTM</h4>
+<div class="paragraph"><p>Advanced Connect To Me (ACTM) is a replacement for the $ConnectToMe and $RevConnectToMe commands.</p></div>
+<div class="paragraph"><p>Add ACTM to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Implementations supporting ACTM must reply to incoming $ConnectToMe and $RevConnectToMe requests, but will themselves always send $CTM or $RCTM.</p></div>
+<div class="paragraph"><p>During requests, the clients send a 4-digit hexadecimmal ID. This ID is an incremental number that is given out for each $CTM that it sent. When a connection between two clients is established, the other party must echo back this 4-digit ID. This is done after $Supports but before $Direction. If the 4-digit ID is not any of the unhandled IDs given out by the requesting client, it must signal "$Error Invalid ID" and disconnect.</p></div>
+<div class="sect4">
+<h5 id="_ctm">CTM</h5>
+<div class="paragraph"><p>Client 1 to hub:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$CTM client2_nick$client1_port$id|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Hub forwarding to client 2:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$CTM client1_ip$client1_port$id|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect4">
+<h5 id="_rctm">RCTM</h5>
+<div class="paragraph"><p>Client 1 to hub:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$RCTM client2_nick|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Hub forwarding to client 2:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$RCTM client1_nick|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Client 2 to hub:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$CTM client1_nick$client2_port$id|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Hub forwarding to client 1:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$CTM client2_ip$client2_port$id|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Example handshake:</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Client party </th>
+<th align="left" valign="top">Server party</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyNick peter|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$MyNick john|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.880|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ACTM GetZBlock ZLIG|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Direction Download 17762|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Key &#8230;|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ACTM GetZBlock ZLIG|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$CTM A91E|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Direction Upload 6494|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Key &#8230;|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Get files.xml.bz2$1|</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_nogetinfo">4.6.12. NoGetINFO</h4>
+<div class="paragraph"><p>This indicates that the hub doesn&#8217;t need to receive a $GetINFO froma  client to send out $MyINFO. This is a variation of the QuickList proposal that is easy to implement and does half of QuickList&#8217;s job.</p></div>
+<div class="paragraph"><p>Add NoGetINFO to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_bzlist">4.6.13. BZList</h4>
+<div class="paragraph"><p>Signals support for BZIP2 compressed file list instead of the Huffman encoded list that NMDC pioneered. The compressed file list is available for download under the name MyList.bz2 instead of MyList.DcLst and files.xml.bz2 instead of files.xml.</p></div>
+<div class="paragraph"><p>Add BZList to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_chunk">4.6.14. CHUNK</h4>
+<div class="paragraph"><p>This is a protocol extension by Valknut that allows retrieval of sections of a file through a modified $Get syntax. The syntax is:
+$Get &lt;filename&gt;$&lt;start-position&gt;$&lt;chunk-size&gt;|</p></div>
+<div class="paragraph"><p>Add CHUNK to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_opplus">4.6.15. OpPlus</h4>
+<div class="paragraph"><p>Characteristics of a hub. Indicates that the hub uses additional commands for operators. For example: $Ban, $TempBan, $UnBan, $GetBanList, $WhoIP, $Banned, $GetTopic, $SetTopic and more.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_feed">4.6.16. Feed</h4>
+<div class="paragraph"><p>This feature offers additional protocol commands notice. Feature allows you to track all the actions of the individual or all users benefit from logging these actions, and notify operators of the hub acts committed by a newly created chat room.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_saltpass">4.6.17. SaltPass</h4>
+<div class="paragraph"><p>This feature offers passwords to be salted and hashed, which means that passwords are no longer sent in plaintext. This adds "random data" to the $GetPass command.</p></div>
+<div class="paragraph"><p>The random data should be Base32 encoded.</p></div>
+<div class="paragraph"><p>The data that is sent back in the $MyPass shall be the password followed by the random data, passed through the Tiger algorithm and then encoded with Base32. I.e., base32( tiger_hash( password + data ) ).</p></div>
+<div class="paragraph"><p>Add SaltPass to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Note that the example below for $MyPass is not literal.</p></div>
+<div class="paragraph"><p>The algorithm here is a port from ADC&#8217;s GPA/PAS.</p></div>
+<div class="paragraph"><p>Example</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$GetPass data|
+$MyPass base32( tiger_hash( password + data ) )|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_ipv4">4.6.18. IPv4</h4>
+<div class="paragraph"><p>This feature is used to indicate IPv4 support when a client is connecting from a IPv6 address.</p></div>
+<div class="paragraph"><p>The hub should send a $ConnectToMe to the client, to indicate a download from the hub. The client will connect to the hub address and port as in a normal client to client connection, this time using the client&#8217;s IPv4 address. The hub should disconnect after it has received the $MyNick command.</p></div>
+<div class="paragraph"><p>The hub should later verify in connection attempts with other IPv4 clients that the IPv4 address matches.</p></div>
+<div class="paragraph"><p>Once the hub has received an IPv4 connection and gathered the IPv4 address, it should set the IPv4 bit in the $MyINFO command.</p></div>
+<div class="paragraph"><p>Add IPv4 to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_ipv6">4.6.19. IPv6</h4>
+<div class="paragraph"><p>This feature is used to indicate IPv6 support.</p></div>
+<div class="paragraph"><p>IPv6 addresses are specified in RFC 4291 form.</p></div>
+<div class="paragraph"><p>If the client has an IPv4 connection, it should also signal the use of IPv4. Clients should use the same TCP and UDP ports for both IPv4 and IPv6 if both are supported. The connection mode (passive, active, SOCKS5) can be different.</p></div>
+<div class="paragraph"><p>The hub is required to set the IPv6 bit in the $MyINFO command.</p></div>
+<div class="paragraph"><p>The connection mode in the $MyINFO tag changes from "M:X" where X is the connection mode (A = Active, B = Passive, 5 = SOCKS5) to "M:XY" where X is the connection mode of IPv4 and Y is the connection mode of IPv6. If a client does not support IPv4 or the IPv4 check failed, the first character will be <em>N</em> for not supported.</p></div>
+<div class="paragraph"><p>Add IP64 to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>A client that support IPv4 and IPv6 will only use one form when sending messages to a hub. The hub is responsible for translating the command into the correct IPv4/IPv6 address. E.g., if a $Search is sent with a IPv6 address, the hub will send the client&#8217;s IPv4 address to those who only support IPv4. This minimizes the amount of traffic toward the hub. If a client sent a passive search request, then it is only sent to active users supporting the same TCP/IP protocol. This is regardless if the client is active in the other protocol. I.e., if a passive search request is sent with a IPv4 address, that search request will only be forwarded to IPv4 users and not <em>converted</em> to an IPv6 request, regardless if the client is active in IPv6.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_tls">4.6.20. TLS</h4>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This feature is used to indicate support for TLS-encrypted client-client connections.
+This feature can be used in conjunction with NAT feature specified below.</p></div>
+<div class="paragraph"><p>Implementations shall add an <em>S</em> to the TLS port in a $ConnectToMe.</p></div>
+<div class="paragraph"><p>Add TLS to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Example connection request:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$ConnectToMe john 192.168.0.1:412S|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_nat">4.6.21. NAT</h4>
+<div class="paragraph"><p>Contexts: Client &#8594; Client</p></div>
+<div class="paragraph"><p>This feature is used to indicate support for NAT-traversal in passive client-client connections.
+This feature can be used in conjunction with TLS feature specified above.</p></div>
+<div class="paragraph"><p>Implementations shall add an <em>N &lt;nick&gt;</em> and <em>R</em> to the port in a $ConnectToMe.</p></div>
+<div class="paragraph"><p>Example connection request:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$RevConnectToMe Client1 Client2|
+$ConnectToMe Client1 192.168.0.1:412N Client2|
+$ConnectToMe Client2 192.168.0.2:412R|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_dht">4.6.22. DHT</h4>
+<div class="paragraph"><p>This feature is used to indicate support for Distributed Hash Tables (DHT) for client-client connections.</p></div>
+<div class="paragraph"><p>This feature uses ADC commands for the DHT swarm <span class="footnote" id="_footnote_StrongDC++ DHT"><br />[<a href="http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf">http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf</a>]<br /></span>.</p></div>
+<div class="paragraph"><p>Add DHT0 to the $Supports to indicate support for this.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_queue_position">4.6.23. Queue position</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$MaxedOut queue_position|</code></pre>
+</div></div>
+<div class="paragraph"><p>This feature is a support for a queue numbering system for client-client connections. See <span class="footnote" id="_footnote_ADC-Ext QP"><br />[<a href="http://adc.sourceforge.net/ADC-EXT.html#_qp_upload_queue_notification">http://adc.sourceforge.net/ADC-EXT.html#_qp_upload_queue_notification</a>]<br /></span> for further information on the ADC equivalent.</p></div>
+<div class="paragraph"><p>This feature extends $MaxedOut by adding a number after it.</p></div>
+<div class="paragraph"><p>Note that there is no feature to announce in $Supports.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$MaxedOut 2|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_failover">4.6.24. FailOver</h4>
+<div class="literalblock">
+<div class="content">
+<pre><code>$FailOver [host[,host]]|</code></pre>
+</div></div>
+<div class="paragraph"><p>This feature is used to indicate support for providing alternative hub addresses in the event that the hub is unavailable. See <span class="footnote" id="_footnote_ADC-Ext FO"><br />[<a href="http://adc.sourceforge.net/ADC-EXT.html#_fo_failover_hub_addresses">http://adc.sourceforge.net/ADC-EXT.html#_fo_failover_hub_addresses</a>]<br /></span> for further information on the ADC equivalent.</p></div>
+<div class="paragraph"><p>Used a comma (,) to separate hub addresses.</p></div>
+<div class="paragraph"><p>The command can be sent at any time by the hub, overwriting or replacing the addresses of the previous command. An empty command (no hosts) clears the list of alternative addresses.</p></div>
+<div class="paragraph"><p>Add FailOver to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$FailOver|
+$FailOver example.com:412|
+$FailOver example.com,example.org:5555,adc://example.net:6666|</code></pre>
+</div></div>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_hub_icon">4.6.25. Hub icon</h4>
+<div class="paragraph"><p>Contexts: Hub &#8594; Pinger</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$SetIcon image_uri|</code></pre>
+</div></div>
+<div class="paragraph"><p>This feature is used to indicate an icon to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".</p></div>
+<div class="paragraph"><p>Hubs that send this also support $HubINFO.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$SetIcon https://www.example.com/images/myimage.ico|
+$SetIcon http://hub.example.org/img/image.ico|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Hub softwares currently known to support this command: HeXHub, Verlihub</p></div>
+</div>
+<div class="sect3">
+<h4 id="_hub_logo">4.6.26. Hub logo</h4>
+<div class="paragraph"><p>Contexts: Hub &#8594; Pinger</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>$SetLogo image_uri|</code></pre>
+</div></div>
+<div class="paragraph"><p>This feature is used to indicate a logotype to use for the hub. The image_uri is an URI linking to the image that should be used. The URI is specified with "http://" or "https://".</p></div>
+<div class="paragraph"><p>Hubs that send this also support $HubINFO.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$SetLogo https://www.example.com/images/mylogo.jpg|
+$SetLogo http://hub.example.org/img/logo.jpg|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Hub softwares currently known to support this command: HeXHub, Verlihub</p></div>
+</div>
+<div class="sect3">
+<h4 id="_nickrule">4.6.27. NickRule</h4>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client, Hub &#8594; Pinger</p></div>
+<div class="paragraph"><p>This extension specifies list of nick rules currently being set by hub configuration.
+The command is sent from hub to client right before the nick is about to be validated.</p></div>
+<div class="paragraph"><p>Here is an example of such command:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$NickRule Min 3$$Max 64$$Char 32 60 62$$Pref [ISP1] [ISP2]|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p><strong>Min</strong> specifies minimum nick length.</p></div>
+<div class="paragraph"><p><strong>Max</strong> specifies maximum nick length.</p></div>
+<div class="paragraph"><p><strong>Char</strong> specifies space separated list of decimals forbidden to use in nick.</p></div>
+<div class="paragraph"><p><strong>Pref</strong> specifies space separated list of nick prefixes required for usage on the hub.</p></div>
+<div class="paragraph"><p>Not all of the above parameters must be specified, the list is based on hub configuration.</p></div>
+<div class="paragraph"><p>Client has a chance to automatically update its nick before sending $ValidateNick command, if possible.</p></div>
+<div class="paragraph"><p>Clients that support NickRule but send invalid nick anyway, will receive $BadNick command with an error specification.</p></div>
+<div class="paragraph"><p>Nick is too short:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$BadNick Min 3|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Nick is too long:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$BadNick Max 64|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Bad characters found in nick:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$BadNick Char 60 62|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Bad prefix found in nick:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$BadNick Pref|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>One of prefixes are required in nick:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$BadNick Pref [ISP1] [ISP2]|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Client should then automatically correct its nick and reconnect to the hub, if possible.</p></div>
+<div class="paragraph"><p>Meaning of this extension is to avoid extra reconnects when nick rules are heavily restricted.</p></div>
+<div class="paragraph"><p>This applies only to non registered nicks.</p></div>
+<div class="paragraph"><p>Add NickRule to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Hub softwares currently known to support this extension: Verlihub</p></div>
+</div>
+<div class="sect3">
+<h4 id="_searchrule">4.6.28. SearchRule</h4>
+<div class="paragraph"><p>Contexts: Hub &#8594; Client</p></div>
+<div class="paragraph"><p>This extension specifies list of search rules currently being used by hub configuration.
+The command is sent from hub to client right after the user is successfully logged in.</p></div>
+<div class="paragraph"><p>Here is an example of such command:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$SearchRule Min 3$$Max 256$$Num 1$$Int 4$$IntPas 6$$Share 10737418240|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p><strong>Min</strong> specifies minimum search string length.</p></div>
+<div class="paragraph"><p><strong>Max</strong> specifies maximum search command length.</p></div>
+<div class="paragraph"><p><strong>Num</strong> specifies number of searches available for use during a period of time.</p></div>
+<div class="paragraph"><p><strong>Int</strong> specifies the period itself in seconds for active search requests for current user profile.</p></div>
+<div class="paragraph"><p><strong>IntPas</strong> specifies the period in seconds for passive search requests for current user profile.</p></div>
+<div class="paragraph"><p><strong>Share</strong> specifies minimum share size in bytes required for search for current user profile.</p></div>
+<div class="paragraph"><p>Not all of the above parameters must be specified, the list is based on hub configuration.
+Client has a chance to automatically update its search interval settings for each hub, compare its share size with required size and prepare other kind of actions before sending any search request commands.</p></div>
+<div class="paragraph"><p><strong>Int</strong> and <strong>IntPas</strong> might be set to <strong>0</strong> - which means that user is actually allowed to search without time limit, and might be set to <strong>-1</strong> - which means that user is not allowed to use search at all due to low profile or any other kind of restrictions.</p></div>
+<div class="paragraph"><p>Meaning of this extension is to avoid extra search requests to the hub, which are not going to bring any search results to the user anyway.
+Atleast the user will know the reason of search results not appearing for him on a specific hub.</p></div>
+<div class="paragraph"><p>Add SearchRule to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Hub softwares currently known to support this extension: Verlihub</p></div>
+</div>
+<div class="sect3">
+<h4 id="_huburl">4.6.29. HubURL</h4>
+<div class="paragraph"><p>Contexts: Hub &gt; Client, Client &gt; Hub, Hub &gt; Pinger, Pinger &gt; Hub</p></div>
+<div class="paragraph"><p>This extension allows the client to specify hub URL currently being used for connection to the hub.</p></div>
+<div class="paragraph"><p>Hub sends following request to the client sometime during the handshake:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$GetHubURL|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Client replies with following command:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$MyHubURL hub.example.org:412|</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>Client should not spend any resources on parsing the URL, it is enough to use the <em>getHubUrl</em> method as is.</p></div>
+<div class="paragraph"><p>Meaning of this extension is to collect statistics about hub addresses being used in a hub by its users, and also to extend address checking functionality to redirect users to most preferable hub address or port.</p></div>
+<div class="paragraph"><p>The idea was also to implement $SetHubURL command to specify preferable hub address without need to reconnect to the hub, in case it was accessed from hub favorites list.
+We are hoping to finish this last part of the implementation very soon.</p></div>
+<div class="paragraph"><p>Add HubURL to the $Supports to indicate support for this.</p></div>
+<div class="paragraph"><p>Hub softwares currently known to support this extension: Verlihub</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples">5. Examples</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_client_hub_connection">5.1. Client – Hub connection</h3>
+<div class="paragraph"><p>See respective command for description of command and parameters.</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Client</th>
+<th align="left" valign="top">Hub</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Lock EXTENDEDPROTOCOL_NMDC_TLS_2903 Pk=Verlihub 1.5.0.0|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Supports UserCommand NoGetINFO NoHello UserIP2 TTHSearch ZPipe0|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Key 011010110110010101111001|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$ValidateNick johndoe|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Supports NoGetINFO NoHello UserIP2 TTHSearch ZPipe0 UserCommand|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$HubName Verlihub|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$GetPass|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$MyPass mysecurepass55555|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Hello johndoe|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Version 1,0091|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$GetNickList|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$MyINFO $ALL johndoe &lt;++ V:0.881,M:P,H:0/1/0,S:2&gt;$ $1000x31$<a href="mailto:johndoe@example.com">johndoe@example.com</a>$12345$|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$LogedIn johndoe|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">&lt;Verlihub&gt; Software: Verlihub 1.5.0.0 ][ Uptime: 5 days 12 hours ][ Users: 196 ][ Share: 95.23 TB ][ Powered by Ledokol 2.9.9.141|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyINFO $ALL Verlihub Hub security$ $0x31$$0$|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyINFO $ALL OpChat Operator chat$ $0x31$$0$|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyINFO $ALL TestNick &lt;++ V:0.880,M:P,H:1/0/0,S:10&gt;$ $100x31$<a href="mailto:test@example.com">test@example.com</a>$23456$|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyINFO $ALL aaa &lt;++ V:0.881,M:P,H:0/0/1,S:5&gt;$ $500x31$<a href="mailto:aaa@example.com">aaa@example.com</a>$56789$|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyINFO $ALL bbb &lt;++ V:0.880,M:A,H:1/0/0,S:3&gt;$ $200x31$<a href="mailto:bbb@example.com">bbb@example.com</a>$34567$|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$OpList VerlihubOpChat|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">&lt;MOTD&gt; This is the MOTD message.|</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_client_client_connection">5.2. Client – Client connection</h3>
+<div class="paragraph"><p>Note the connecting client is the client, but that the server speaks first.</p></div>
+<div class="paragraph"><p>See respective command for description of command and parameters.</p></div>
+<div class="tableblock">
+<table rules="all"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Client</th>
+<th align="left" valign="top">Server</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$MyNick bbb|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$MyNick aaa|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881Ref=dchub://example.org:411|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ZLIG|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Direction Download 31604|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$Key 011010110110010101111001|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ZLIG|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Direction Upload 82|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$Key 011010110110010101111001|</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">$ADCGET file files.xml.bz2 0 -1 ZL1|</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">$ADCSND file files.xml.bz2 0 29725 ZL1|</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_license">6. License</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document is licensed under the GPLv3 license.</p></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Version 1.4<br />
+Last updated 2024-04-27 09:25:55 CEST
+</div>
+</div>
+</body>
+</html>

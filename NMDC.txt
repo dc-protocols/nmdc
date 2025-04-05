@@ -1391,7 +1391,7 @@ Add NoHello to the $Supports to indicate support for this.
 ==== ChatOnly
 Contexts: Client -> Hub
 
-This indicates that the client only support chat capabilities to allow the client to bypass hub rules (that relate to file sharing). The client should be disconnected if it sends a $Search, $ConnectoMe or $RevConnect.
+This indicates that the client only support chat capabilities to allow the client to bypass hub rules (that relate to file sharing). The client should be disconnected if it sends a $Search, $ConnectToMe or $RevConnectToMe.
 
 Add ChatOnly to the $Supports to indicate support for this.
 
