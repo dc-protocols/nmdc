@@ -738,6 +738,11 @@ Sent by clients to the hub after $Hello is received to denote the version used f
 
 Version is 1.0091 by default.
 
+Common example:
+====
+ $Version 1,0091|
+====
+
 ==== $HubName
  $HubName name|
 
@@ -1808,7 +1813,7 @@ Example connection request:
 ==== DHT
 This feature is used to indicate support for Distributed Hash Tables (DHT) for client-client connections. 
 
-This feature uses ADC commands for the DHT swarm footnoteref:[StrongDC++ DHT, http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf].
+This feature uses ADC commands for the DHT swarm footnoteref:[StrongDC++ DHT, https://web.archive.org/web/20160429071350/http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf].
 
 Add DHT0 to the $Supports to indicate support for this.
 

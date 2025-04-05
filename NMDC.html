@@ -2058,6 +2058,14 @@ Note that the example uses <em>0x31</em> for signaling the flag as <em>Normal</e
 <div class="paragraph"><p>Contexts: Client &#8594; Hub</p></div>
 <div class="paragraph"><p>Sent by clients to the hub after $Hello is received to denote the version used for the client. This command is nowadays not used to denote the client&#8217;s version but was used frequently by the original Neo-Modus Direct Connect (NMDC) client. The last version of the Neo-Modus client was 1.0091 and is what is commonly used by current clients. The default system locale is used, which means the period may be a comma etc.</p></div>
 <div class="paragraph"><p>Version is 1.0091 by default.</p></div>
+<div class="paragraph"><p>Common example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>$Version 1,0091|</code></pre>
+</div></div>
+</div></div>
 </div>
 <div class="sect3">
 <h4 id="_hubname">4.4.29. $HubName</h4>
@@ -3462,7 +3470,7 @@ $ConnectToMe Client2 192.168.0.2:412R|</code></pre>
 <div class="sect3">
 <h4 id="_dht">4.6.22. DHT</h4>
 <div class="paragraph"><p>This feature is used to indicate support for Distributed Hash Tables (DHT) for client-client connections.</p></div>
-<div class="paragraph"><p>This feature uses ADC commands for the DHT swarm <span class="footnote" id="_footnote_StrongDC++ DHT"><br />[<a href="http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf">http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf</a>]<br /></span>.</p></div>
+<div class="paragraph"><p>This feature uses ADC commands for the DHT swarm <span class="footnote" id="_footnote_StrongDC++ DHT"><br />[<a href="https://web.archive.org/web/20160429071350/http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf">https://web.archive.org/web/20160429071350/http://strongdc.sourceforge.net/download/StrongDC_DHT.pdf</a>]<br /></span>.</p></div>
 <div class="paragraph"><p>Add DHT0 to the $Supports to indicate support for this.</p></div>
 </div>
 <div class="sect3">
@@ -3856,7 +3864,7 @@ cellspacing="0" cellpadding="4">
 <div id="footer">
 <div id="footer-text">
 Version 1.4<br />
-Last updated 2025-04-05 12:53:16 CEST
+Last updated 2025-04-05 13:33:06 CEST
 </div>
 </div>
 </body>
