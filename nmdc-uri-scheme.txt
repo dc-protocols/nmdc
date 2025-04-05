@@ -1,12 +1,13 @@
-﻿(last updated 2015-05-26)
+﻿(last updated 2025-04-05)
 
-Resource Identifier (RI) Scheme name: dchub 
+Resource Identifier (RI) Scheme name: dchub, nmdcs
 Status: Provisional
 
 Scheme syntax:
 
-   The syntax of the 'dchub' URI scheme is specified below in ABNF specified in RFC 5234 [RFC5234]:
-      
+   The syntax of the 'dchub' and 'nmdcs' URI schemes are specified below in ABNF
+   specified in RFC 5234 [RFC5234]:
+
 	  dchub-URI   = scheme "://" authority ["/" [path]]
 	  scheme      = "dchub"
 	  authority   = hostname [":" port]
@@ -16,19 +17,26 @@ Scheme syntax:
 	  user-path   = the name of a user
 	  file-path   = the path to a file or directory
 
-   The (same) syntax of the 'dchub' URI scheme is specified below in a less verbose form:
+	  nmdcs-URI   = scheme "://" authority ["/" [path]]
+	  scheme      = "nmdcs"
+	  -||-
 
-	  dchub://<host>[:<port>][/[<user>[/[<path>]]]]
+   The (same) syntax of the 'dchub' and 'nmdcs' URI schemes are specified below
+   in a less verbose form:
+
+	  [dchub|nmdcs]://<host>[:<port>][/[<user>[/[<path>]]]]
 
    The hostname MUST be specified.
 
    Examples:
-      dchub://example.com
-      dchub://example.com:666
-      dchub://example.com/John/uploads/applications/linux.iso
-      dchub://example.com:411/John/uploads/applications/linux.iso
+      [dchub|nmdcs]://example.com
+      [dchub|nmdcs]://example.com:666
+      [dchub|nmdcs]://example.com/John/uploads/applications/linux.iso
+      [dchub|nmdcs]://example.com:411/John/uploads/applications/linux.iso
 
 Scheme semantics:
+
+   [dchub]
 
    Direct Connect is a peer-to-peer file sharing protocol used by Neo-Modus
    Direct Connect (NMDC) clients and reversed engineered for use in a number
@@ -49,6 +57,15 @@ Scheme semantics:
    then the queued file ought to be the user's file list. Path to a directory
    MUST end in a "/".
 
+   [nmdcs]
+
+   As of 2019, several NMDC hub softwares have implemented TLS-encrypted
+   connection on hub server side, similar to ADCS. In order to connect to such
+   hubs, a user that has a compatible client, has to use 'nmdcs' URI scheme
+   instead. Normally a NMDCS hub enables TLS-encryption auto-detection using
+   the magic bytes in the beginning of protocol handshake, and allows an
+   TLS-unencrypted user to fall back to unencrypted channel if necessary.
+
 Encoding considerations:
 
    1. Generic Encoding
@@ -59,7 +76,7 @@ Encoding considerations:
 
    2. String Comparison
 
-   Some hubs MAY treat dchub: URIs that differ only in case of the user
+   Some hubs MAY treat dchub: and nmdcs: URIs that differ only in case of the user
    component as identifying the same resource.
 
    The 'file-path' SHOULD be case-insensitive.
@@ -76,23 +93,24 @@ Encoding considerations:
 
    Trailing slashes ("/") SHOULD NOT be normalized.
 
-   The URI SHALL use scheme-based normalization according to RFC 3986 [RFC3986] section 6.2.3. I.e., the following URIs are equivalent:
-         dchub://example.com
-		 dchub://example.com/
-		 dchub://example.com:411
-		 dchub://example.com:411/
+   The URI SHALL use scheme-based normalization according to RFC 3986 [RFC3986]
+   section 6.2.3. I.e., the following URIs are equivalent:
+         [dchub|nmdcs]://example.com
+		 [dchub|nmdcs]://example.com/
+		 [dchub|nmdcs]://example.com:411
+		 [dchub|nmdcs]://example.com:411/
 
 Applications/protocols that use this scheme name:
 
-   The 'dchub' URI scheme is intended to be used by applications that are 
+   The 'dchub' URI scheme is intended to be used by applications that are
    using the NMDC protocol or are referencing NMDC hubs, users and files as network resources.
 
-   Most Direct Connect applications support the 'dchub' URI scheme (or parts of it). 
-   Applications that are supporting the file-path syntax (implicitly) 
+   Most Direct Connect applications support the 'dchub' URI scheme (or parts of it).
+   Applications that are supporting the file-path syntax (implicitly)
    support the user syntax and applications that support the user syntax (implicitly) support the generic syntax.
 
-   Applications and systems that are using the 'dchub' URI scheme include hub lists (e.g. in XML and HTTP form), 
-   hub owners and operators (e.g. for redirecting and referencing other hubs), 
+   Applications and systems that are using the 'dchub' URI scheme include hub lists (e.g. in XML and HTTP form),
+   hub owners and operators (e.g. for redirecting and referencing other hubs),
    client implementations (spanning multiple operating systems) and more.
 
    Support for the 'dchub' URI scheme include the original NMDC client (1999).
@@ -193,7 +211,8 @@ Security considerations:
    The registering party or a member of the NMDC project
 
    8. References
-   8.1 Normative References
+
+   8.1. Normative References
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
@@ -202,10 +221,10 @@ Security considerations:
    [RFC5234]  Crocker, D. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234, January 2008.
 
-   8.2 Informative References
+   8.2. Informative References
 
    [DCPROTO]  "NMDC Protocol",
-              <http://nmdc.sourceforge.net/NMDC.html>.
+              <https://nmdc.sourceforge.net/NMDC.html>.
 
    [WIKI]     "Direct Connect (protocol)",
               <https://en.wikipedia.org/wiki/Direct_Connect_(protocol)>.

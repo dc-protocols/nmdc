@@ -1,7 +1,7 @@
 = NMDC Protocol
 :author: Aleksandr Zenkov
 :email: webmaster@feardc.net
-:revdate: 2024-04-27
+:revdate: 2025-04-05
 :revnumber: 1.4
 :lang: en
 
