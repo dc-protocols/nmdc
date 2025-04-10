@@ -10,6 +10,6 @@ asciidoc3 NMDC.txt
 
 Compiled HTML document is available on following websites:
 
+* https://dc-protocols.github.io/NMDC.html
 * https://nmdc.sourceforge.io/NMDC.html
 * https://client.feardc.net/NMDC.html
-* https://github.com/dc-protocols/nmdc/blob/main/NMDC.html
