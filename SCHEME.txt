@@ -224,7 +224,7 @@ Security considerations:
    8.2. Informative References
 
    [DCPROTO]  "NMDC Protocol",
-              <https://nmdc.sourceforge.net/NMDC.html>.
+              <https://dc-protocols.github.io/NMDC.html>.
 
    [WIKI]     "Direct Connect (protocol)",
               <https://en.wikipedia.org/wiki/Direct_Connect_(protocol)>.

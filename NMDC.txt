@@ -2,7 +2,7 @@
 :author: Aleksandr Zenkov
 :email: webmaster@feardc.net
 :revdate: 2025-04-05
-:revnumber: 1.4
+:revnumber: 1.5
 :lang: en
 
 == Abstract
@@ -15,12 +15,12 @@ The protocol's basic outline was written by Jon Hess in 1998 for the NMDC client
 
 This document uses information from many sources, including but not limited to;
 
-* Ptokax wiki: http://wiki.ptokax.org
-* TeamFair wiki: https://web.archive.org/web/20090313025627/http://www.teamfair.info/wiki/index.php?title=Main_Page
-* The Nighthawk forum
-* Mutor protocol docs: https://sourceforge.net/p/nmdc/svnroot/HEAD/tree/trunk/Other/mutor_protocoldoc.htm
-* Verlihub NMDC section: https://www.te-home.net/?do=work&id=verlihub&page=nmdc
-* MyDC portal: http://mydc.ru/topic915.html + http://mydc.ru/topic5095.html
+* Verlihub NMDC page: https://www.te-home.net/?do=work&id=verlihub&page=nmdc
+* TeamFair wiki: https://github.com/dc-protocols/nmdc/tree/main/Other/TeamFair
+* The Nighthawk forum: https://github.com/dc-protocols/nmdc/tree/main/Other/The%20NightHawk%20Forum
+* Protocol documentation by Mutor: https://github.com/dc-protocols/nmdc/blob/main/Other/mutor_protocoldoc.htm
+* MyDC portal: http://mydc.ru/topic915.html & http://mydc.ru/topic5095.html
+* Ptokax wiki: http://wiki.ptokax.org/doku.php?id=dcprotocol
 
 This document was compiled on {docdate} using AsciiDoc3 {asciidoc3-version} by {author}.
 
@@ -28,12 +28,7 @@ This document was compiled on {docdate} using AsciiDoc3 {asciidoc3-version} by {
 The latest draft of the next version of this document as well as intermediate
 and older versions can be downloaded from https://github.com/dc-protocols/nmdc
 
-=== Version 1.4
-Fredrik Ullner <ullner@gmail>, 2013-12-20
-
-* Added $SetIcon extension
-* Added note on $ADCGet's use of ADC fields
-
+=== Version 1.5
 {author} <{email}>, {revdate}
 
 * Updated to AsciiDoc3
@@ -49,8 +44,14 @@ Fredrik Ullner <ullner@gmail>, 2013-12-20
 * Added new connection types
 * Fixed $MyINFO status bytes
 
+=== Version 1.4
+Fredrik Ullner <ullner@gmail.com>, 2013-12-20
+
+* Added $SetIcon extension
+* Added note on $ADCGet's use of ADC fields
+
 === Version 1.3
-Fredrik Ullner <ullner@gmail>, 2013-03-09
+Fredrik Ullner <ullner@gmail.com>, 2013-03-09
 
 * Changed note about escape sequences
 * Added IPv4 and IPv6 extensions
@@ -92,9 +93,9 @@ Fredrik Ullner <ullner@gmail.com>
 * Most messages begin with a '$' (dollar sign).
 * Most messages end with a '|' (pipe).
 * Command names and parameters use single space (' ') and additional dollar signs as separators. 
-* There is no standardization on code page to use. The local charset of the computer system is commonly used. The original implementation used win.1252.
+* There is no standardization on code page to use. The local charset of the computer system is commonly used. The original implementation used Windown-1252.
 * Hub port defaults to 411. The client should then try 412, 413 etc.
-* Client - Client port defaults to 412. 
+* Client port defaults to 412. 
 * Some command names are incorrectly spelled, per the original protocol. This document notes when a spelling error is 'intentional', per the original protocol.
 * The hub should validate that the client sending the message is actually the correct user.
 * This document does not (mainly) use '<' and '>' brackets for illustration purposes; any occurrence should be taken literally, unless otherwise noted.
@@ -126,7 +127,7 @@ This information can also be provided in a client - hub connection.
 
 Example:
 ====
- $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881Ref=example.com:411
+ $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.882Ref=example.com:411
 ====
 
 ==== Escape sequences
@@ -157,7 +158,7 @@ Example:
  <john> I am going to display a dollar sign /%DCN036%/ and then a pipe /%DCN124%/.|
 ====
 
-===== Method 2
+===== Method 2 (most common)
 By using the HTML equivalent of the character.
 
 This escape sequence was created in and is used by DC++.
@@ -220,10 +221,10 @@ construction to cause a processing client to exhaust its memory or
 address-space capacity. Likewise, even non-malicious filelists can
 grow arbitrarily large such that in combination with other memory
 requirements of client software, similar exhaustion occurs. Client
-software therefore SHOULD bound bzip2 decompression memory usage and
+software therefore _SHOULD_ bound bzip2 decompression memory usage and
 use streaming XML APIs to process filelists.
 
-See footnoteref:[DC++ 0.75 and older vulnerable to bzip2 filelist bomb, https://dcpp.wordpress.com/2010/03/12/dc-0-75-and-older-vulnerable-to-bzip2-filelist-bomb/] for more information.
+See https://dcpp.wordpress.com/2010/03/12/dc-0-75-and-older-vulnerable-to-bzip2-filelist-bomb/[DC++ 0.75 and older vulnerable to bzip2 filelist bomb] for more information.
 
 ==== Excessive Local Storage Consumption
 
@@ -235,29 +236,39 @@ for impending storage capacity limits with a view to prevent local
 denials of service resulting from exceeding them.
 
 === URI scheme
-See the URI scheme document following this document.
+
+See the *nmdc-uri-scheme.txt* following this document.
 
 === Commands
+
 ==== Chat message
- <nick> message|
+
+====
+ <Nick> Message|
+====
 
 Contexts: Client -> Hub -> Client, Hub -> Client
 
-Will send a chat message by 'nick'. The hub should broadcast the message to all clients if a client send this.
+Will send a chat message by *Nick*. The hub should broadcast the message to all clients if a client send this.
 
-Note that the brackets (< and >) are required. Some implementations allow spaces in the nickname; be aware that other implementations may simply search for the first occurrence of a space. If the chat message contain a pipe, it should be replaced by its HTML equivalent.
+Note: The brackets (< and >) are required. Some implementations allow spaces in the nickname; be aware that other implementations may simply search for the first occurrence of a space. If the chat message contain a pipe, it should be replaced by its HTML equivalent.
 
 Example:
 ====
  <john> cats are cute|
 ====
 
-==== $To
- $To: othernick From: nick $<nick> message|
+==== $To:
+
+====
+ $To: OtherNick From: Nick $<Nick> Message|
+====
 
 Contexts: Client -> Hub -> Client, Hub -> Client
 
-Will send a private message from one user to another user. The same rules as a basic chat message apply. 
+Will send a private message from one user to another user. The same rules as a basic chat message apply.
+
+Note: The colon at the end of command, it must be present.
 
 Example:
 ====
@@ -266,7 +277,9 @@ Example:
 
 ==== $ConnectToMe
 
- $ConnectToMe RemoteNick SenderIp:SenderPort
+====
+ $ConnectToMe RemoteNick SenderIp:SenderPort|
+====
 
 Contexts: Client -> Hub -> Client
 
@@ -281,7 +294,9 @@ Note that the above is for older clients.
 
 Newer versions of NMDC client include the sender's nick as well (but may not be compatible with all implementations);
  
- $ConnectToMe SenderNick RemoteNick SenderIp:SenderPort
+====
+ $ConnectToMe SenderNick RemoteNick SenderIp:SenderPort|
+====
 
 Example:
 ====
@@ -290,11 +305,13 @@ Example:
 
 ==== $RevConnectToMe
 
+====
  $RevConnectToMe SenderNick RemoteNick|
+====
 
 Contexts: Client -> Hub -> Client
 
-Request that the remotenick send a ConnectToMe back to SenderNick. Clients sending do not allow incoming TCP connections whereas the remote user does (or should).
+Request that the remotenick send a *$ConnectToMe* back to *SenderNick*. Clients sending do not allow incoming TCP connections whereas the remote user does (or should).
 
 Example:
 ====
@@ -302,21 +319,28 @@ Example:
 ====
 
 ==== $Ping
- $Ping sender_ip:sender_port|
 
-sender_ip is the IP address of the remote client.
+====
+ $Ping SenderIp:SenderPort|
+====
 
-sender_port is the port of the remote client that is being listened to.
+*SenderIp* is the IP address of the remote client. *SenderPort* is the port of the remote client that is being listened to.
 
 ==== $GetPass
+
+====
  $GetPass|
+====
 
 Contexts: Hub -> Client
 
 Request that the client send a password that correspond to a user account (matched by the user's nick name).
 
 ==== $MyPass
+
+====
  $MyPass password|
+====
 
 Contexts: Client -> Hub
 
@@ -328,7 +352,10 @@ Example:
 ====
 
 ==== $LogedIn
+
+====
  $LogedIn nick|
+====
 
 Contexts: Hub -> Client
 
@@ -340,13 +367,14 @@ Example:
 ====
 
 ==== $Get
- $Get file$offset|
+
+====
+ $Get File$Offset|
+====
  
 Contexts: Client -> Client
 
-file is the remote location (including path) of the file.
-
-offset is the byte offset to start at for resuming files.
+*File* is the remote location (including path) of the file. *Offset* is the byte offset to start at for resuming files.
 
 Example:
 ====
@@ -354,51 +382,66 @@ Example:
 ====
 
 ==== $Send
+
+====
  $Send|
- 
+====
+
 Contexts: Client -> Client
 
 This is used as a way to specify that the file should be sent. The uploader should proceed to stream the amount of bytes requested previously.
 
 ==== Provide file size
+
+====
  $FileLength file_size|
- 
+====
+
 Contexts: Client -> Client
 
 This command is used as a way to provide the size of the file requested.
 
 ==== $GetListLen
+
+====
  $GetListLen|
- 
+====
+
 Contexts: Client -> Client
 
 Get file list size.
 
 ==== $ListLen
+
+====
  $ListLen file_size|
- 
+====
+
 Contexts: Client -> Client
 
 This command is used as a way to provide the size of the file list of the client.
 
 ==== $Direction
+
+====
  $Direction direction number|
+====
 
 Contexts: Client -> Client
 
 This command is used as a way to decide which party should be allowed to download. 
 
-The direction is either 'Upload' or 'Download', depending on whether the connection request is a ConnectToMe or ReverseConnectToMe.
+The direction is either *Upload* or *Download*, depending on whether the connection request is a ConnectToMe or RevConnectToMe.
 
-The number is a random number (above 0), typically between 1 and 32767. If both clients want to download, the client with the highest number gets to start downloading first. If the numbers are equal, the connection is closed. 
+The number is a random number (above 0), typically between *1* and *32767*. If both clients want to download, the client with the highest number gets to start downloading first. If the numbers are equal, the connection is closed. 
 
 This command should be sent;
 
-* After a $Key command or
+* After a *$Key* command or
 
-* After a $Lock command with EXTENDED information
+* After a *$Lock* command with **EXTENDED** information
 
-I.e., if the $Lock is EXTENDED, $Direction MUST be sent after the $Lock command and not the $Key command.
+I.e., if the *$Lock* is *EXTENDED*, *$Direction* _MUST_ be sent after the $Lock command and not the $Key command.
 
 Implementation note: The highest number DC++ sends is 32767 (2^15-1, 0x7FFF) as the Neo-Modus Direct Connect client will disconnect if it receives a higher number. Clients can send a higher value, in risk of losing compatibility.
 
@@ -681,7 +724,7 @@ This addition to the description field was introduced to ease concerns by hub op
 
 Example:
 ====
- <++ V:0.881,M:P,H:0/1/0,S:2>
+ <++ V:0.882,M:P,H:0/1/0,S:2>
 ====
 
 * "\+\+": indicates the client (in this case, DC++)
@@ -703,7 +746,7 @@ Note that the IPv4/IPv6 extensions add additional data to the M. See the IPv4/IP
 Example:
 Note that the example uses '0x31' for signaling the flag as 'Normal', for ease of display.
 ====
- $MyINFO $ALL johndoe <++ V:0.881,M:P,H:0/1/0,S:2>$ $1000x31$example@example.com$1234$\|
+ $MyINFO $ALL johndoe <++ V:0.882,M:P,H:0/1/0,S:2>$ $1000x31$example@example.com$1234$\|
 ====
 
 ==== $GetINFO
@@ -864,7 +907,7 @@ Implementation note: In NMDC hub;
 Example:
 See $Supports for the use of EXTENDED.
 ====
- $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881|
+ $Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.882|
 
  $Lock EXTENDEDPROTOCOL_NMDC_TLS_2903 Pk=Verlihub 1.5.0.0|
 ====
@@ -1698,7 +1741,7 @@ Example handshake:
 |=====
 |Client party |Server party
 | |$MyNick peter\| 
-| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881\|
+| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.882\|
 |$MyNick john\| |
 |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.880\| |
 | |$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ACTM GetZBlock ZLIG\|
@@ -1820,7 +1863,7 @@ Add DHT0 to the $Supports to indicate support for this.
 ==== Queue position
  $MaxedOut queue_position|
 
-This feature is a support for a queue numbering system for client-client connections. See footnoteref:[ADC-Ext QP, http://adc.sourceforge.net/ADC-EXT.html#_qp_upload_queue_notification] for further information on the ADC equivalent.
+This feature is a support for a queue numbering system for client-client connections. See footnoteref:[ADC-Ext QP, https://dc-protocols.github.io/ADC-EXT.html#_qp_upload_queue_notification] for further information on the ADC equivalent.
 
 This feature extends $MaxedOut by adding a number after it.
 
@@ -1835,7 +1878,7 @@ Example:
 
  $FailOver [host[,host]]|
 
-This feature is used to indicate support for providing alternative hub addresses in the event that the hub is unavailable. See footnoteref:[ADC-Ext FO, http://adc.sourceforge.net/ADC-EXT.html#_fo_failover_hub_addresses] for further information on the ADC equivalent.
+This feature is used to indicate support for providing alternative hub addresses in the event that the hub is unavailable. See footnoteref:[ADC-Ext FO, https://dc-protocols.github.io/ADC-EXT.html#_fo_failover_hub_addresses] for further information on the ADC equivalent.
 
 Used a comma (,) to separate hub addresses.
 
@@ -2030,13 +2073,13 @@ See respective command for description of command and parameters.
 | |$Hello johndoe\|
 |$Version 1,0091\| |
 |$GetNickList\| |
-|$MyINFO $ALL johndoe <++ V:0.881,M:P,H:0/1/0,S:2>$ $1000x31$johndoe@example.com$12345$\| |
+|$MyINFO $ALL johndoe <++ V:0.882,M:P,H:0/1/0,S:2>$ $1000x31$johndoe@example.com$12345$\| |
 | |$LogedIn johndoe\|
 | |<Verlihub> Software: Verlihub 1.5.0.0 ][ Uptime: 5 days 12 hours ][ Users: 196 ][ Share: 95.23 TB ][ Powered by Ledokol 2.9.9.141\|
 | |$MyINFO $ALL Verlihub Hub security$ $0x31$$0$\|
 | |$MyINFO $ALL OpChat Operator chat$ $0x31$$0$\|
 | |$MyINFO $ALL TestNick <++ V:0.880,M:P,H:1/0/0,S:10>$ $100x31$test@example.com$23456$\|
-| |$MyINFO $ALL aaa <++ V:0.881,M:P,H:0/0/1,S:5>$ $500x31$aaa@example.com$56789$\|
+| |$MyINFO $ALL aaa <++ V:0.882,M:P,H:0/0/1,S:5>$ $500x31$aaa@example.com$56789$\|
 | |$MyINFO $ALL bbb <++ V:0.880,M:A,H:1/0/0,S:3>$ $200x31$bbb@example.com$34567$\|
 | |$OpList Verlihub$$OpChat$$\|
 | |<MOTD> This is the MOTD message.\|
@@ -2053,8 +2096,8 @@ See respective command for description of command and parameters.
 |Client|Server
 | |$MyNick bbb\|
 |$MyNick aaa\| |
-|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881\| |
-| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.881Ref=dchub://example.org:411\|
+|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.882\| |
+| |$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=DCPLUSPLUS0.882Ref=dchub://example.org:411\|
 |$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ZLIG\| |
 |$Direction Download 31604\| |
 |$Key 011010110110010101111001\| |
