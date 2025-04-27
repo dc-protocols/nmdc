@@ -1,4 +1,4 @@
-﻿(last updated 2025-04-05)
+(last updated 2025-04-05)
 
 Resource Identifier (RI) Scheme name: dchub, nmdcs
 Status: Provisional
