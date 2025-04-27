@@ -672,7 +672,7 @@ It is an integer selected from:
 If it is a TTH search, *_search_pattern* should be "TTH:<hash>".
 
 Spaces in the search pattern are replaced by a dollar sign ($).
-As with all NMDC messages, ($) and (|) are escaped with "&amp;#36;" and "&amp;#124;", with (&) being further replaced with "&amp;amp;".
+As with all NMDC messages, ($) and (|) are escaped with "\&#36;" and "\&#124;", with (&) being further replaced with "\&amp;".
 
 Examples:
 
@@ -1318,7 +1318,7 @@ It is usually an email address where the account/password information should be 
 
 Hub category provides information about hub categorization such as Public, Private, Chatonly, Failover and Redirect.
 
-Character encoding provides information about character encoding currently used on hub, this helps a hublist to display correctly encoded hub information such as hub name, description, $MyINFOs, when converting texts to UTF-8.
+Character encoding provides information about character encoding currently used on hub, this helps a hublist to display correctly encoded hub information such as hub name, description, *$MyINFO*, when converting texts to UTF-8.
 
 Common encodings are: CP1250, CP1251, CP1252, CP1253, GB18030 and UTF-8, but are not limited to.
 
@@ -1436,12 +1436,12 @@ The tag has the following identifiers in the data:
 |c (99) |Client
 |v (118) |Version
 |m (109) |Mode
-|h (104) |Hub count, x/y/z (where x is the number of hubs as a normal user, y as the number of hubs as registered and z as the number of hubs as operator)
+|h (104) |Hub count, "x/y/z" - where "x" is the number of hubs as a normal user, "y" as the number of hubs as registered and "z" as the number of hubs as operator
 |s (115) |Slots
 |f (102) |Free slots
-|l (108) |Bandwidth limit (L: and B: in $MyINFO)
-|o (111) |O: in $MyINFO
-|r (114) |R: in $MyINFO
+|l (108) |Bandwidth limit, "L:" and "B:" in $MyINFO
+|o (111) |"O:" in $MyINFO
+|r (114) |"R:" in $MyINFO
 |=====
 
 Tag identifiers are separated by a space ( ).
@@ -1469,7 +1469,7 @@ The status is a 32-bit integers where the bits are according to the following ta
 |9 |Client supports partial search
 |=====
 
-Bit 5 and Bit 6 of the 32-bit status flag are used to indicate wether a user is an OP or wether the $IN string send by the hubsoft belongs to a bot.
+Bit 5 and Bit 6 of the 32-bit status flag are used to indicate whether a user is an OP or whether the *$IN* string send by the hubsoft belongs to a bot.
 These values are read-only and should never be changed by a client.
 The hubsoft must disconnect for this.
 If a client connects and has successfully logged in with the correct password, the hubsoft will set bit 5 of the status flag and sends this part to all connected users, including the newly connected OP.
@@ -1477,7 +1477,7 @@ The connecting client must save the status flag it received from the hub and use
 However, as said, it is not allowed to set or reset bit 5 and bit 6 of the status flag.
 
 Bit 7 of the 32-bit status flag indicates if the client is in DND-mode (Do-Not-Disturb).
-Unlike Away mode, this mode will prevent the client to receive any PM's.
+Unlike "Away" mode, this mode will prevent the client to receive any PMs.
 Clients are responsible themselves for setting/resetting this bit.
 Once this bit is set, and the hub receives a *$To:* string for a client in DND-mode, the hub must ignore the *$To:* and reply to the sender with a message that the receiver is in DND-Mode.
 A client having this bit set, should automatically reset this bit when sending a pm itself.
@@ -1531,7 +1531,7 @@ Add *NickChange* to the *$Supports* to indicate support for this.
 The client will have to update its own *$MyINFO* string and user list.
 
 The hub will will send *$ClientNick* to the client to validate that the change is done.
-To all other users, a *$Quit _old_nick* will be sent and a *$MyINFO $ALL* of the user with the new nick.
+To all other users, a *$Quit* will be sent and a *$MyINFO* of the user with the new nick.
 
 If the user is an operator, *$OpList* will be updated appropriately as well.
 
@@ -1561,11 +1561,11 @@ Syntax:
 
 An APN MultiHubChat message normally has this format:
 
-*<(YYY)XXXXX> MMMMMMM|* - where YYY is the entry point prefix, XXXXX is the username and MMMMMMM is the message.
+"<(YYY)XXXXX> MMMMMMM|" - where "YYY" is the entry point prefix, "XXXXX" is the username and "MMMMMMM" is the message.
 
 To allow the different entry point handlers to identify which messages are coming from other multi hub chat entry points, there is a command send by the hub after login called *$FeaturedNetworks*:
 
-*$FeaturedNetworks YYY+++$$+++YYY$YYY+++$$+++|* - YYY stands for one entry point to the chat network.
+"$FeaturedNetworks YYY+++$$+++YYY$YYY+++$$+++|" - "YYY" stands for one entry point to the chat network.
 In the biggest currently running instance of the APN MultiHubChat system, five or more different prefixes are used.
 
 ===== Implementation
@@ -1732,9 +1732,9 @@ The value is derived by logical OR of the following values:
 
 ===== Escaping
 
-Escaping of dollar and pipe is necessary for the *_command* in _raw_ mode.
+Escaping of dollar and pipe is necessary for the *_command* in 'raw' mode.
 The DC++ escape sequence will be used.
-I.e. &#124; for pipe, &#36; for dollar and &amp; for the ampersand.
+I.e. "\&#124;" for pipe, "\&#36;" for dollar and "\&amp;" for the ampersand.
 Escaping is used for all fields before they are sent to the hub / shown to the user.
 As with all NMDC commands, they must be terminated by the pipe character.
 
@@ -1754,7 +1754,7 @@ It is legal to add text (after the space) before the pipe, but it won't be used 
 ====
 
 Will add a raw menu item with title *_title* with command *_raw*.
-This command must end with a &#124;, if not it should be discarded.
+This command must end with a "\&#124;", if not it should be discarded.
 The raw command may be used to specify multiple commands to be sent to the hub.
 
 ===== Details: Raw nick limited
@@ -1763,7 +1763,7 @@ The raw command may be used to specify multiple commands to be sent to the hub.
  $UserCommand 2 _context _title$_raw|
 ====
 
-Is exactly the same as _raw_, except that the command should only be run once per *%[nick]*.
+Is exactly the same as _raw_, except that the command should only be run once per "%[nick]".
 This is to prevent the client from sending out more than one message that disconnects someone.
 Generally, this is only useful in the User-File context (e.g. viewing search results) where it is possible to select one user multiple times.
 
@@ -1791,7 +1791,7 @@ Examples:
 
 Contexts: Client -> Hub
 
-This indicates that the client doesn't need either *$Hello* or* $NickList* to be sent to it when connecting to a hub.
+This indicates that the client doesn't need either *$Hello* or *$NickList* to be sent to it when connecting to a hub.
 To populate its user list, a *$MyINFO* for each user is enough.
 *$Hello* is still accepted, for adding bots to the user list.
 DC++ still sends a *$GetNickList* to indicate that it is interested in the user list.
@@ -1865,7 +1865,7 @@ There was an argument of having the client start with *$Supports* and then havin
 Having the client start with *$Supports* as a response to "EXTENDEDPROTOCOL" is in a sense much cleaner.
 
 * It has been found that *$HubName* can be sent pretty much at any time. Typically done in conjunction with *$Lock*.
-* *$Supports* are in the same format as in the client protocol; "$Supports <feat1> <feat2> <feat3>&#124;"
+* *$Supports* are in the same format as in the client protocol; "$Supports <feat1> <feat2> <feat3>"
 
 Identification
 
@@ -1886,31 +1886,31 @@ Commands Sent
 
 Connecting
 
-* $Lock
-* $HubName
-* $Supports
+* *$Lock*
+* *$HubName*
+* *$Supports*
 
 Identification
 Authentication
 
-* $GetPass
-* $BadPass
-* $ValidateDenide
+* *$GetPass*
+* *$BadPass*
+* *$ValidateDenide*
 
 Acceptance
 
-* $LogedIn
-* $MyINFO
-* $MyINFO stream
+* *$LogedIn*
+* *$MyINFO*
+* *$MyINFO* stream
 
 Connected
 
-* $To
-* $Search
-* $SR
-* $ConnectToMe
-* $RevConnectToMe
-* $ForceMove
+* *$To:*
+* *$Search*
+* *$SR*
+* *$ConnectToMe*
+* *$RevConnectToMe*
+* *$ForceMove*
 
 Commands Accepted
 
@@ -1918,30 +1918,30 @@ Messages that a QHUB listens to in each state, QHUB ignores otherwise;
 
 Connecting
 
-* $Key
-* $Supports
+* *$Key*
+* *$Supports*
 
 Identification
 
-* $Version
-* $MyINFO
+* *$Version*
+* *$MyINFO*
 
 Authentication
 
-* $MyPass
+* *$MyPass*
 
 Acceptance
 Connected
 
-* $GetNickList
-* $MyINFO
-* $To:
-* $Search
-* $SR
-* $ConnectToMe
-* $RevConnectToMe
-* $Kick
-* $OpForceMove
+* *$GetNickList*
+* *$MyINFO*
+* *$To:*
+* *$Search*
+* *$SR*
+* *$ConnectToMe*
+* *$RevConnectToMe*
+* *$Kick*
+* *$OpForceMove*
 
 Notes
 
@@ -2166,13 +2166,13 @@ Add *NoGetINFO* to the *$Supports* to indicate support for this.
 ==== BZList
 
 Signals support for BZip2 compressed file list instead of the Huffman encoded list that NMDC pioneered.
-The compressed file list is available for download under the name *MyList.bz2* instead of *MyList.DcLst* and *files.xml.bz2* instead of *files.xml*.
+The compressed file list is available for download under the name "MyList.bz2" instead of "MyList.DcLst" and "files.xml.bz2" instead of "files.xml".
 
 Add *BZList* to the *$Supports* to indicate support for this.
 
 ==== CHUNK
 
-This is a protocol extension by Valknut that allows retrieval of sections of a file through a modified $Get syntax.
+This is a protocol extension by Valknut that allows retrieval of sections of a file through a modified *$Get* syntax.
 The syntax is:
 
 ====
@@ -2199,14 +2199,13 @@ This adds "random data" to the *$GetPass* command.
 
 The random data should be Base32 encoded.
 
-The data that is sent back in the *$MyPass* shall be the password followed by the random data, passed through the Tiger algorithm and then encoded with Base32.
-I.e., base32( tiger_hash( password + data ) ).
+The data that is sent back in the *$MyPass* shall be the password followed by the random data, passed through the Tiger algorithm and then encoded with Base32: "base32( tiger_hash( _password + _data ) )"
 
 Add *SaltPass* to the *$Supports* to indicate support for this.
 
 Note that the example below for *$MyPass* is not literal.
 
-The algorithm here is a port from ADC's GPA/PAS.
+The algorithm here is a port from ADC https://dc-protocols.github.io/ADC.html#_gpa[GPA] and https://dc-protocols.github.io/ADC.html#_pas[PAS].
 
 Example:
 
@@ -2241,7 +2240,7 @@ The connection mode (passive, active, SOCKS5) can be different.
 
 The hub is required to set the IPv6 bit in the *$MyINFO* command.
 
-The connection mode in the *$MyINFO* tag changes from "M:X" where X is the connection mode (A = Active, B = Passive, 5 = SOCKS5) to "M:XY" where X is the connection mode of IPv4 and Y is the connection mode of IPv6.
+The connection mode in the *$MyINFO* tag changes from "M:X" where "X" is the connection mode (A = active, P = passive, 5 = SOCKS5) to "M:XY" where "X" is the connection mode of IPv4 and "Y" is the connection mode of IPv6.
 If a client does not support IPv4 or the IPv4 check failed, the first character will be "N" for not supported.
 
 Add *IP64* to the *$Supports* to indicate support for this.
@@ -2259,7 +2258,7 @@ I.e., if a passive search request is sent with a IPv4 address, that search reque
 Contexts: Client -> Client
 
 This feature is used to indicate support for TLS-encrypted client-client connections.
-This feature can be used in conjunction with NAT feature specified below.
+This feature can be used in conjunction with *NAT* feature specified below.
 
 Implementations shall add an "S" to the TLS port in a *$ConnectToMe*.
 
@@ -2485,7 +2484,7 @@ Client has a chance to automatically update its search interval settings for eac
 Meaning of this extension is to avoid extra search requests to the hub, which are not going to bring any search results to the user anyway.
 Atleast the user will know the reason of search results not appearing for him on a specific hub.
 
-Add *SearchRule* to the $Supports to indicate support for this.
+Add *SearchRule* to the *$Supports* to indicate support for this.
 
 Hub softwares currently known to support this extension: Verlihub
 
@@ -2507,7 +2506,7 @@ Client replies with following command:
  $MyHubURL hub.example.com:412|
 ====
 
-Client should not spend any resources on parsing the URL, it is enough to use the _getHubUrl()_ method as is (see DC++ source).
+Client should not spend any resources on parsing the URL, it is enough to use the "getHubUrl()" method as is (see DC++ source).
 
 Meaning of this extension is to collect statistics about hub addresses being used in a hub by its users, and also to extend address checking functionality to redirect users to most preferable hub address or port.
 
