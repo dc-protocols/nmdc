@@ -1,5 +1,4 @@
 = NMDC Protocol
-
 :author: Aleksandr Zenkov
 :email: webmaster@feardc.net
 :revdate: 2025-04-05
