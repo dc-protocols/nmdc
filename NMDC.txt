@@ -20,9 +20,10 @@ Extensions have followed over the years and may be incompatible with the origina
 The protocol's basic outline was written by Jon Hess in 1998 for the NMDC client.
 Major influencers in the development that followed of NMDC include (in no particular order): Jacek Sieka, Sid, aDe, David Marwood, Suxxx, Stefan Gorling, Sphinx, HaArd and others.
 
-This document uses information from many sources, including but not limited to;
+This document uses information from many sources, including but not limited to:
 
-* Verlihub NMDC page: https://www.te-home.net/?do=work&id=verlihub&page=nmdc
+* Verlihub NMDC page: https://te-home.net/?do=work&id=verlihub&page=nmdc
+* Team Elite Hublist FAQ: https://te-home.net/?do=hublist&action=faq
 * TeamFair wiki: https://github.com/dc-protocols/nmdc/tree/main/Other/TeamFair
 * The Nighthawk forum: https://github.com/dc-protocols/nmdc/tree/main/Other/The%20NightHawk%20Forum
 * Protocol documentation by Mutor: https://github.com/dc-protocols/nmdc/blob/main/Other/mutor_protocoldoc.htm
@@ -109,9 +110,9 @@ Fredrik Ullner <ullner@gmail.com>
 * Most messages begin with a ($) - a dollar sign
 * Most messages end with a (|) - a pipe
 * Command names and parameters use single space ( ) and additional dollar signs as separators
-* There is no standardization on code page to use. The local charset of the computer system is commonly used. The original implementation used *Windown-1252*.
-* Hub port defaults to *411*. The client should then try *412*, *413* etc.
-* Client port defaults to *412*
+* There is no standardization on code page to use. The local charset of the computer system is commonly used. The original implementation used Windown-1252/CP1252.
+* Hub port defaults to 411. The client should then try 412, 413 etc.
+* Client port defaults to 412
 * Some command names are incorrectly spelled, per the original protocol. This document notes when a spelling error is _intentional_, per the original protocol.
 * The hub should validate that the client sending the message is actually the correct user
 * This document does not mainly use (<) and (>) brackets for illustration purposes; any occurrence should be taken literally, unless otherwise noted
@@ -256,7 +257,7 @@ Client software _SHOULD_ monitor downloads for impending storage capacity limits
 
 === URI scheme
 
-See the *SCHEME.txt* following this document.
+See the https://dc-protocols.github.io/NMDC-SCHEME.txt[NMDC-SCHEME.txt] following this document.
 
 === Commands
 
