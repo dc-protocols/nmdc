@@ -257,7 +257,7 @@ Client software _SHOULD_ monitor downloads for impending storage capacity limits
 
 === URI scheme
 
-See the https://dc-protocols.github.io/NMDC-SCHEME.txt[NMDC-SCHEME.txt] following this document.
+See the https://dc-protocols.github.io/NMDC_SCHEME.txt[NMDC_SCHEME.txt] following this document.
 
 === Commands
 
