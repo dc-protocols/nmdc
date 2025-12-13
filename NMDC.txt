@@ -1,7 +1,7 @@
 = NMDC Protocol
 :author: Aleksandr Zenkov
 :email: webmaster@feardc.net
-:revdate: 2025-04-05
+:revdate: 2025-12-13
 :revnumber: 1.5
 :lang: en
 
@@ -53,6 +53,8 @@ and older versions can be downloaded from https://github.com/dc-protocols/nmdc/b
 * Added NAT extension
 * Added new connection types
 * Fixed $MyINFO status bytes
+* Added $MyNick command
+* Fixed $ZOn command syntax
 
 === Version 1.4
 
@@ -1054,6 +1056,22 @@ Example:
  $Quit peter|
 ====
 
+==== $MyNick
+
+====
+ $MyNick _nick|
+====
+
+Contexts: Client -> Client
+
+Inform nickname of the user in a client to client connection.
+
+Example:
+
+====
+ $MyNick peter|
+====
+
 ==== $Lock
 
 ====
@@ -1302,7 +1320,7 @@ Add *BotINFO* to the *$Supports* to indicate support for this.
 ==== $HubINFO
 
 ====
- $HubINFO _name$_address:_port$_description$_max_users$_min_share$_min_slots$_max_hubs$_hub_type$_hubowner_login$_hub_category$_char_encoding|
+ $HubINFO _name$_address:_port$_description$_max_users$_min_share$_min_slots$_max_hubs$_hub_type$_owner_login$_hub_category$_char_encoding|
 ====
 
 Contexts: Hub -> Pinger
@@ -1314,7 +1332,7 @@ Max users, min share, min slots and maximum number of open hubs for the client h
 
 Hub type gives information about the hub software and script which gave the information.
 
-Hubowner login is meant to help hubowners to edit information about their hub directly from the hublist portal.
+Owner login is meant to help hubowners to edit information about their hub directly from the hublist portal.
 It is usually an email address where the account/password information should be sent.
 
 Hub category provides information about hub categorization such as Public, Private, Chatonly, Failover and Redirect.
@@ -1608,7 +1626,7 @@ The command adds an escaping sequence:
 ==== $ZOn
 
 ====
- $ZOn _blob|
+ $ZOn|_blob
 ====
 
 This command's intention is to compress (with ZLib) data to decrease bandwidth use.
