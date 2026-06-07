@@ -1,0 +1,15 @@
+/* NMDC.css */
+
+body {
+	font-variant-numeric: lining-nums;
+}
+
+h4 {
+	border-bottom: 2px solid silver;
+}
+
+h3, h4 {
+	padding-top: 0.5em;
+}
+
+/* end of file*/
