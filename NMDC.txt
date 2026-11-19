@@ -50,6 +50,12 @@ and older versions can be downloaded from https://github.com/dc-protocols/nmdc/b
 * Added a terminology section with Base32 note
 * Added command states
 * Added more complex examples
+* Added NATIP6 extension
+* Added PortTest extension
+* Added FDCX extension
+* Added CCPM extension
+* $OpList and $BotList can list single nicks
+* Search flag _is_max_size can be "T" when size is not restricted
 
 === Version 1.5
 
@@ -669,7 +675,8 @@ It is made up of a question mark (?) delimited string as follows:
 
 *_size_restricted* is "T" if the search should be restricted to files of a minimum or maximum size, otherwise "F".
 
-*_is_max_size* is "F" if *_size_restricted* is "F" or if the size restriction places a lower limit on file size, otherwise "T".
+*_is_max_size* is "T" if the size restriction places an upper limit on file size, "F" if it places a lower limit.
+If *_size_restricted* is "F", *_is_max_size* has no meaning and can be either "F" or "T"; DC++ sends "T" in TTH searches, see the example below.
 
 *_size* is the minimum or maximum size of the file to search for (according to *_is_max_size*) if *_size_restricted* is "T", otherwise zero "0".
 
@@ -975,8 +982,11 @@ Example:
 
 Contexts: Hub -> Client
 
-Providing the full "+++$$+++" delimited listing of operators.
+Providing the "+++$$+++" delimited listing of operators.
 This is a subset of the users provided in *$NickList*.
+
+The hub can send the full listing, or only the operators that joined or became operators, down to a single nick, e.g. when an operator logs in.
+A client adds the listed nicks to its operators and never takes away an operator because the nick is missing from a later listing.
 
 The following should be sent if there are no operators online:
 
@@ -988,6 +998,7 @@ Example:
 
 ====
  $OpList john$$peter|
+ $OpList mary|
 ====
 
 ==== $Kick
@@ -1223,8 +1234,11 @@ For syntax on the parameters, see *$Search*.
 
 Contexts: Hub -> Client
 
-Providing the full "+++$$+++" delimited listing of bots.
+Providing the "+++$$+++" delimited listing of bots.
 This is a subset of the users provided in *$NickList*.
+
+As with *$OpList*, the hub can send the full listing, or only the bots that joined, down to a single nick.
+A client adds the listed nicks to its bots and never takes away a bot because the nick is missing from a later listing.
 
 Add *BotList* to the *$Supports* to indicate support for this.
 
@@ -2255,6 +2269,343 @@ Example connection request:
 ====
 
 Hubs known to support this extension: Verlihub, FearHub
+
+Clients known to support this extension: FearDC
+
+
+==== NATIP6
+
+Contexts: Client -> Hub -> Client, Client -> Hub
+
+This feature is used to connect two passive users over IPv6, also when the hub connection itself uses IPv4.
+It works like the *NAT* feature specified above, with the addition that the hub proves the IPv6 address of each user before giving it to others.
+It is different from the *IP64* extension: a client built for one can not use the other.
+
+Add *NATIP6* and *TLS* to the *$Supports* to indicate support for this.
+The hub adds *NATIP6* to its *$Supports* only when client stated both flags and the hub can accept connections over IPv6.
+A client shall ignore every address in brackets from a hub that did not state this flag.
+
+After login the hub asks the client to prove its address, with the IPv6 address and port of the hub and a one time token:
+
+====
+ $ConnectToMe peter [2001:db8::1]:411 0123456789abcdef0123456789abcdef|
+====
+
+The client connects there over IPv6 and sends only the token, nick is not needed:
+
+====
+ $MyNick 0123456789abcdef0123456789abcdef|
+====
+
+The hub remembers the source address of this connection for this user and closes the connection.
+The token works once, for 60 seconds.
+A source address of a completed TCP connection is used because an address stated by a client could point to anyone.
+
+When both users have proved their addresses, the hub forwards every *NS* and *RS* request of the *NAT* feature in two forms, IPv6 first, and adds the sender to *RS*.
+The port of the IPv6 form is the port client stated:
+
+====
+ $RevConnectToMe john peter|
+ $ConnectToMe john 192.168.1.3:412NS peter|
+ $ConnectToMe john [2001:db8::2]:412NS peter|
+ $ConnectToMe john 203.0.113.2:6000NS peter|
+ $ConnectToMe peter 192.168.1.4:413RS|
+ $ConnectToMe peter [2001:db8::3]:413RS john|
+ $ConnectToMe peter 203.0.113.3:7000RS john|
+====
+
+Clients answer one *RS* for both forms.
+Each client connects to the other one from the address it proved, which matters on computers with several IPv6 addresses, because a firewall lets through only the address that was dialed.
+Connections over IPv6 shall use TLS 1.3 or newer, there is no form without *S*.
+The hub can not see these connections, so each client enforces this by itself.
+The first connection that succeeds is used and the other one is dropped, a client may wait some seconds with IPv4 for this.
+
+Hubs known to support this extension: Verlihub
+
+Clients known to support this extension: FearDC
+
+
+==== PortTest
+
+Contexts: Client -> Hub -> Client
+
+This feature is used by a client to find out if its ports can be reached from outside, and how others see its address.
+Many hubs do not send *$UserIP* to users, so this does not depend on it.
+
+Add *PortTest* to the *$Supports* to indicate support for this.
+The hub adds it to its own *$Supports* when client stated it, and shall disconnect a client that sends the command without stating the flag.
+
+The client sends its TCP, TLS and UDP port:
+
+====
+ $PortTest 412 413 414|
+====
+
+The hub answers with the address it sees, tries to connect to both TCP ports, sends a UDP packet to the UDP port and tells the result:
+
+====
+ $PortTest ip 203.0.113.2|
+ $PortTest 412 ok|
+ $PortTest 413 fail|
+ $PortTest 414 udp 0123456789abcdef0123456789abcdef|
+====
+
+The UDP packet contains the same token, so the client itself sees if it arrived:
+
+====
+ $PortTest 0123456789abcdef0123456789abcdef|
+====
+
+When the hub has too many tests running, it answers:
+
+====
+ $PortTest busy|
+====
+
+The hub connects only to the address of the user who asked, closes each connection without sending anything, and runs at most one test per minute for one connection.
+A client that gets everything through can use active mode on this hub, otherwise passive mode on this hub.
+
+Hubs known to support this extension: Verlihub
+
+Clients known to support this extension: FearDC
+
+
+==== FDCX
+
+Contexts: Client -> Hub -> Client, Client -> Client
+
+This feature is used to tell other users the address of a FDCX wallet, so they can send coins to it, for example a tip.
+Only users who state the flag get addresses, other clients never see them.
+
+Add *FDCX* to the *$Supports* to indicate support for this.
+A client states the flag only when it shares an address itself and has a certificate for TLS, a client without them does not use this feature at all.
+The hub adds it to its own *$Supports* when client stated it and the hub has this feature turned on, otherwise the command from that client is unknown to the hub.
+A client shall not send the command to a hub that did not state the flag, and shall ignore it from such a hub.
+
+The client sends its address with the keyprint of its own certificate, also again when one of them changes, or nothing to remove the address when it stops sharing during the login:
+
+====
+ $FDCX tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q|
+ $FDCX |
+====
+
+The address is a bech32 or bech32m address with prefix *fdcx1* on mainnet, *tfdcx1* on testnet or *rfdcx1* on regtest, at most 90 characters, sent in lower case.
+The keyprint is *SHA256/* and the Base32 of the SHA-256 digest of the DER certificate the client uses for TLS on client to client connections, 52 characters without padding, in upper case.
+An address always comes with its keyprint.
+The hub checks the checksum and the form of the keyprint and disconnects a client that sends anything else.
+The client can send it before its login ends, the hub keeps it and passes it on when user is in the list.
+
+The hub adds the nick of the sender itself, so nobody can send an address for another user, and sends it to every user with this flag, the sender too.
+No address after the nick means the user removed it:
+
+====
+ $FDCX peter tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q|
+ $FDCX peter|
+====
+
+After login the hub sends the addresses of all other users that have one in one command, each entry ends with *$$*, like the *$UserIP* list:
+
+====
+ $FDCX peter tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q$$john tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/S3MWGLZWGVSMYMBSKIKATTZCVBJPEAZO5QEZ5VMWPQGQADHMMB5A$$|
+====
+
+A client accepts both forms from the hub, one user with or without *$$* at the end, and a list.
+The command can come before *$MyINFO* of that nick, so a client keeps it until the user is known.
+A client uses only addresses of the network it uses itself, ignores an address without valid keyprint, and should show the whole address before sending coins.
+A hub may limit how often a user sends the command.
+
+Between clients the flag is in *$Supports* of the client to client handshake, so a client can check the address the hub passed on with the client of that user itself.
+A client states the flag there only when it shares an address, on connections that belong to a hub with this feature.
+When both clients state the flag and the connection uses TLS, each client sends its address after *$Key*, without keyprint, its certificate on that connection shows it, also on connections for files:
+
+====
+ $FDCX tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6|
+====
+
+The address is sent only once per connection, never empty, and never over a connection without TLS.
+A client ignores the command when it did not state the flag itself, and treats an empty or invalid address as no answer.
+To check an address before paying, a client asks for a connection in the usual way, with *$ConnectToMe* or *$RevConnectToMe*, states *Download* in *$Direction* and closes the connection when the address arrived, the other client needs no free slot for it.
+When the address of the client differs from the one the hub passed on, or no connection is possible, the client should warn its user before coins are sent.
+When the other client shows a certificate with another keyprint than the one the hub passed on with its address, somebody stands between the two clients, so the address is not confirmed and the client shall warn its user.
+The keyprint protects against anyone between the two clients, not against the hub that passes both on.
+When the connection to the hub itself can be changed on the way, for example a connection through a proxy without TLS or without a checked hub certificate, address and keyprint can be changed together, so a client should warn its user before coins go to a client it has not seen before.
+
+When two clients can not connect to each other, for example both are passive, they meet at the FDCX relay instead.
+The client that checks makes a random token of 32 lowercase hex characters and sends it to the other user through the hub, the hub adds the nick of the sender and passes it on only to a user with this flag:
+
+====
+ $FDCXR peter 0123456789abcdef0123456789abcdef|
+ $FDCXR john 0123456789abcdef0123456789abcdef|
+====
+
+The first line goes from client to hub, the second from hub to *peter*, when *john* sent it.
+The hub drops the command when the user is not online or did not state the flag, and the checking client gives up on its own time.
+A hub that did not state the flag treats the command as unknown, like *$FDCX*, and may limit how often a user sends it.
+
+Both clients connect to the relay with TLS and send the token, the relay answers both with an empty command when the second one came, then passes everything between them:
+
+====
+ $FDCXR 0123456789abcdef0123456789abcdef|
+ $FDCXR|
+====
+
+After that both run the usual client to client handshake, the client that checks starts it like after *$ConnectToMe* and states *Download*, then each sends its address with *$FDCX*.
+TLS ends at the relay, so there each client also sends its own client certificate and a signature, both in base64 on one line:
+
+====
+ $FDCX tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 MIIDBjCCAe6gAwIBAgIB... kq3ZpG8x...|
+====
+
+The certificate is the DER form of the certificate the client uses for TLS on direct connections.
+The signature is SHA-256 with the key of that certificate over the bytes *FDCX relay|<token>|<own nick>|<address>*, with the relay token, the nick of the sending client on that hub in the encoding of that hub, as it goes in $MyNick, and the address it sends.
+The other client checks the signature with that certificate and the nick it knows for this user, an answer without good signature is no answer.
+Its keyprint, SHA-256 of the DER certificate, is the same one a direct connection shows, so a client compares it with the one the hub passed on and the one it saw for this user before.
+The relay passes only a few kilobytes and closes the connection after a short time, a client never sends or asks for files there.
+The relay stores nothing, the client checks the keyprint of the relay certificate before it sends anything.
+
+Hubs known to support this extension: Verlihub
+
+Clients known to support this extension: FearDC
+
+
+==== CCPM
+
+Contexts: Client -> Hub -> Client, Client -> Client
+
+This feature is used for private chat directly between two clients, like the *CCPM* extension of ADC.
+Messages do not go through the hub, the hub only allows or refuses each channel, by the same rules as private messages through the hub.
+Channels go only over TLS.
+
+Add *CCPM* and *TLS* to the *$Supports* to indicate support for this.
+The hub adds *CCPM* to its own *$Supports* only when client stated both flags and the hub has this feature turned on.
+A client shall not use the forms below on a hub that did not state the flag, and shall ignore them from such a hub.
+
+The client asks for a channel with a *P* right before the *S* of the port in *$ConnectToMe*, or with the word *P* after the nick in *$RevConnectToMe*, there is no form without *S*:
+
+====
+ $ConnectToMe john 192.168.1.3:412PS|
+ $RevConnectToMe peter john P|
+====
+
+Two passive users use the forms of the *NAT* feature, with *P* in the same place:
+
+====
+ $RevConnectToMe peter john P|
+ $ConnectToMe peter 192.168.1.4:413NPS john|
+ $ConnectToMe john 192.168.1.3:412RPS|
+====
+
+The hub adds the nick of the sender to every form with *P* it passes on, when the form has none, so the other client knows who asked:
+
+====
+ $ConnectToMe john 192.168.1.3:412PS peter|
+ $ConnectToMe peter 192.168.1.4:413RPS john|
+====
+
+Before the hub passes a request on, it checks that the other user stated the flag, that TLS of both users fits, that both users may use private chat with each other and that both users can reach each other.
+Rules for downloads, like minimum share, class to download, hidden share or chat only mode, are not for these requests.
+The hub never passes a form with *P* to a user who did not state the flag.
+The hub disconnects with a message a client that sends a form with *P* without the agreed flag, or a malformed form.
+When the hub refuses, it tells the sender why:
+
+====
+ $CCPM john off|
+ $CCPM john unreachable|
+ $CCPM john denied|
+====
+
+*off* means the hub turned the feature off, or the other user is offline, a bot or the sender itself, or has no *CCPM* or no fitting TLS, *unreachable* means both users are passive without *NAT* of both or the hub keeps them apart, *denied* means one of both users may not use private chat with the other or the hub refused the channel for another reason.
+The client then sends its private messages through the hub with *$To*.
+A client asks for a channel only when its user chooses a direct private chat with that user, and sends no private messages to that user through the hub while it waits.
+When the channel does not come up within some seconds, the client also falls back to the hub.
+
+The client that connects got the request with *P*, so it knows the purpose of the connection, and it is the one that sends *$Supports*, *$Direction* and *$Key* second.
+Only this client states *CCPM* in *$Supports* of the client to client handshake, on connections with TLS; the hub passes requests with *P* only between users that have the extension, so it needs no flag of the other client.
+Connections for files never have it, so clients without this extension never see it.
+It takes only the nick the hub named as sender, and states:
+
+====
+ $Direction PM 5678|
+====
+
+The client that waits for the connection takes *PM* only from a user it asked for a channel or whose request with *P* it answered a moment ago, and only over TLS, otherwise it closes the connection.
+When it takes the channel, it confirms at once with a single *|*, and the connecting client opens the channel only after this confirmation.
+*PM* is taken over its own direction, a download it wanted goes over another connection.
+When two channels between the same users open at the same time, both clients keep the one that the user with the higher nick in byte order connected, and close the other.
+A client that gets *PM* on a connection without TLS sends an error and closes it:
+
+====
+ $Error CCPM needs TLS|
+====
+
+Full example, *peter* is active and wants to chat with *john*:
+
+====
+ peter -> hub   $ConnectToMe john 192.168.1.3:412PS|
+ hub -> john    $ConnectToMe john 192.168.1.3:412PS peter|
+ john -> peter  $MyNick john|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=FearDC2.0.0.0|
+ peter -> john  $MyNick peter|$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=FearDC2.0.0.0|$Supports MiniSlots XmlBZList ADCGet TTHL TTHF ZLIG |$Direction Upload 1234|$Key ...|
+ john -> peter  $Supports MiniSlots XmlBZList ADCGet TTHL TTHF ZLIG CCPM |$Direction PM 5678|$Key ...|
+ peter -> john  |
+====
+
+When *peter* is passive, *john* answers *$RevConnectToMe peter john P* with *$ConnectToMe peter 192.168.1.4:413PS*, the hub adds *john*, *peter* connects and states *PM*.
+
+A channel is a connection like any other for the *FDCX* extension: a client that shares an address states *FDCX* in its *$Supports* there too, and when both stated it, each sends its address with *$FDCX* once right after the confirmation, its certificate on the channel shows the keyprint.
+A channel lives long, so a client tells its address again on the channel when it changes, and *$FDCX* without address when it stops sharing one, each one replaces the one before; a client that gets an address while it did not send its own yet answers with its own.
+A client that checks the address of a user it has a channel with takes the last one of the channel, it needs no other connection for it.
+
+After the confirmation both send messages, the sender is the other end of the connection:
+
+====
+ $MSG Hello john, how are you?|
+====
+
+Text is UTF-8 on a channel, also on hubs with another encoding, with *$* and *|* escaped as *&#36;* and *&#124;* like in chat.
+A client sends a single *|* every few minutes so a dead channel is noticed, and either client closes the channel by closing the connection.
+Commands for shared files are not allowed on a channel, a client answers them with *$Error* and closes it.
+The hub does not see the messages.
+
+Files of a chat, like pictures and voice messages, go over the channel in place of a magnet link, up to 10 MiB each.
+The sender offers a file with its TTH, size and name, the name escaped like a message:
+
+====
+ $FILE TTHROOT 34567 picture.jpg|
+====
+
+The receiver shows it like a magnet link of the sender and asks for it when its user wants the file:
+
+====
+ $FILEGET TTHROOT|
+====
+
+The sender sends the file in pieces of at most 64 KiB, each piece is the command and then exactly that many raw bytes; messages can go between pieces:
+
+====
+ $FILEDATA TTHROOT 0 34567|<34567 bytes>
+====
+
+Pieces come in order, the receiver takes them only for a file it asked for and checks the TTH of the whole file.
+The receiver asks for the next file of a channel only when the one before came or failed, so no file waits behind others.
+A sender that can not give a file answers with a reason, *gone* when it is not offered any more, *busy* when too many files wait on the channel, *toobig* when it is larger than the limit:
+
+====
+ $FILENO TTHROOT gone|
+====
+
+When a file does not come over the channel, the receiver gets it from the sender like a file of a magnet link, through the hub.
+
+Between two passive users over IPv4 with *NAT*, both ends use the ports of their hub connections, so only one connection between them fits.
+When a file transfer between them needs these ports, the client that starts it asks the other one to give up the channel:
+
+====
+ $Close transfer|
+====
+
+The other client drops the connection at once without the closing wait of TCP, so the ports are free on both sides; when it does not do so within a few seconds, the asking client drops it the same way.
+Both clients keep the private chat and send its messages through the hub from then on.
+
+Hubs known to support this extension: Verlihub
 
 Clients known to support this extension: FearDC
 
