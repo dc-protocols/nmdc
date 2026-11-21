@@ -54,6 +54,7 @@ and older versions can be downloaded from https://github.com/dc-protocols/nmdc/b
 * Added PortTest extension
 * Added FDCX extension
 * Added CCPM extension
+* Added Avatar extension
 * $OpList and $BotList can list single nicks
 * Search flag _is_max_size can be "T" when size is not restricted
 
@@ -2356,12 +2357,13 @@ The UDP packet contains the same token, so the client itself sees if it arrived:
  $PortTest 0123456789abcdef0123456789abcdef|
 ====
 
-When the hub has too many tests running, it answers:
+When the hub has too many tests running, or this connection had a test less than a minute ago, it answers:
 
 ====
  $PortTest busy|
 ====
 
+The client keeps the result it had and can ask again later, a minute after its last test.
 The hub connects only to the address of the user who asked, closes each connection without sending anything, and runs at most one test per minute for one connection.
 A client that gets everything through can use active mode on this hub, otherwise passive mode on this hub.
 
@@ -2413,6 +2415,33 @@ A client accepts both forms from the hub, one user with or without *$$* at the e
 The command can come before *$MyINFO* of that nick, so a client keeps it until the user is known.
 A client uses only addresses of the network it uses itself, ignores an address without valid keyprint, and should show the whole address before sending coins.
 A hub may limit how often a user sends the command.
+
+A hub can have an address of its own, so users can send coins to the hub itself, for example a tip.
+It sends its address after login, and again to every user with this flag when it changes, with the smallest tip in whole coins that it thanks for in main chat, *0* when it thanks for none.
+Nothing after the command name means the hub has no address any more, a hub without an address sends nothing at login:
+
+====
+ $FDCXH tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 5|
+ $FDCXH |
+====
+
+A client uses the address only when it is of the network the client uses itself.
+The hub sends the address on its own connection, so a client trusts it as much as that connection: through a proxy without TLS or without a checked hub certificate it can be changed on the way, and a client should warn its user before coins are sent.
+
+When a payment to the address of the hub went out and is at least the amount the hub named, the client of the payer can send its transaction id, 64 lower case hex characters, once for each payment:
+
+====
+ $FDCXT 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef|
+====
+
+The payment names its payer in the data of an OP_RETURN output: *feardc:* and the first 16 bytes of the SHA-256 digest over the hub name, a zero byte and the nick of the payer.
+The hub name is the part of *$HubName* in its first 1024 bytes before the first space, dash and space, where the topic starts, and both name and nick are the bytes the hub sends, so the encoding of a client plays no part.
+Only the payer can put this data into the payment, so nobody can claim the payment of another user.
+
+The hub checks the payment itself, for example with an FDCX explorer, and asks again while it is not in a block yet.
+It thanks in main chat only for a confirmed payment that pays at least the named amount to the address of the hub, names the nick that sent the command, and is not older than an hour, each payment once.
+Otherwise it tells the payer why the tip is not announced.
+A hub that did not state the flag treats the command as unknown, like *$FDCX*, and may limit how often a user sends it.
 
 Between clients the flag is in *$Supports* of the client to client handshake, so a client can check the address the hub passed on with the client of that user itself.
 A client states the flag there only when it shares an address, on connections that belong to a hub with this feature.
@@ -2604,6 +2633,75 @@ When a file transfer between them needs these ports, the client that starts it a
 
 The other client drops the connection at once without the closing wait of TCP, so the ports are free on both sides; when it does not do so within a few seconds, the asking client drops it the same way.
 Both clients keep the private chat and send its messages through the hub from then on.
+
+Hubs known to support this extension: Verlihub
+
+Clients known to support this extension: FearDC
+
+
+==== Avatar
+
+Contexts: Client -> Hub -> Client, Hub -> Client, Client -> Client
+
+This feature is used to show a picture of each user and of the hub itself next to their names, like messengers do.
+The hub passes only the hash of the picture of a user, the picture itself goes between clients.
+Only users who state the flag get avatars, other clients never see them.
+
+Add *Avatar* to the *$Supports* to indicate support for this.
+The hub adds it to its own *$Supports* when client stated it and the hub has this feature turned on, otherwise the command from that client is unknown to the hub.
+A client shall not send the command to a hub that did not state the flag, and shall ignore it from such a hub.
+
+The client sends the TTH of its avatar picture, also again when the picture changes, or nothing after the command when the user removed it:
+
+====
+ $Avatar ZXOJ3CT5RY4WTQ3IPOGKXGHNRTVJ7FLX3SHMZ2Q|
+ $Avatar |
+====
+
+The TTH is the Base32 of the tiger tree root of the picture file, 39 characters, in upper case.
+The hub checks its form and disconnects a client that sends anything else.
+The client can send it before its login ends, the hub keeps it and passes it on when user is in the list.
+A client that did not send a TTH on this connection sends no empty command, the hub knows no avatar of it at login.
+
+The hub adds the nick of the sender itself, so nobody can send an avatar for another user, and sends it to every user with this flag, the sender too.
+Each user entry ends with *$$*, also a single one, so a client tells it from the avatar of the hub; no TTH after the nick means the user removed the avatar:
+
+====
+ $Avatar peter ZXOJ3CT5RY4WTQ3IPOGKXGHNRTVJ7FLX3SHMZ2Q$$|
+ $Avatar peter$$|
+====
+
+After login the hub sends the TTHs of all other users that have one in one command, like the *$UserIP* list:
+
+====
+ $Avatar peter ZXOJ3CT5RY4WTQ3IPOGKXGHNRTVJ7FLX3SHMZ2Q$$john 2SZHDJ6LV5YRUMH4UUTLGNLNKAMJMCYSWOUH6EI$$|
+====
+
+The command can come before *$MyINFO* of that nick, so a client keeps it until the user is known.
+A hub may limit how often a user sends the command.
+
+The hub tells its own avatar as the address of a picture without *$$*, "http://" or "https://" only, the same picture it gives to pingers with *$SetIcon*.
+Nothing after the command means the hub has no avatar any more:
+
+====
+ $Avatar https://www.example.com/images/myicon.png|
+ $Avatar |
+====
+
+The hub sends it after login when it has one, and again to every user with this flag when it changes.
+A client gets the picture from that address itself, keeps it by its address and should give up after a few tries.
+
+A client gets the picture of a user from the client of that user by its TTH, like any file, over a usual client to client connection asked with *$ConnectToMe* or *$RevConnectToMe*:
+
+====
+ $ADCGET file TTH/ZXOJ3CT5RY4WTQ3IPOGKXGHNRTVJ7FLX3SHMZ2Q 0 -1|
+====
+
+A client that states the flag to the hub gives its own avatar picture to anyone who asks for its TTH, without a free slot, also when the picture is not in its share.
+The client that asks checks the TTH of the bytes it got and keeps the picture by its TTH, so a picture is got only once, also when many users have the same one.
+An avatar picture is a small JPEG, PNG, GIF, WebP, BMP or ICO file of at most 64 KiB, a client ignores a bigger one or one it can not read.
+A client shows the picture in a circle, so a square one fits best.
+A client should get avatars without delaying other transfers, a few at a time, and give up after a few tries.
 
 Hubs known to support this extension: Verlihub
 
