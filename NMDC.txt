@@ -2387,7 +2387,7 @@ A client shall not send the command to a hub that did not state the flag, and sh
 The client sends its address with the keyprint of its own certificate, also again when one of them changes, or nothing to remove the address when it stops sharing during the login:
 
 ====
- $FDCX tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q|
+ $FDCX fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q|
  $FDCX |
 ====
 
@@ -2401,14 +2401,14 @@ The hub adds the nick of the sender itself, so nobody can send an address for an
 No address after the nick means the user removed it:
 
 ====
- $FDCX peter tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q|
+ $FDCX peter fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q|
  $FDCX peter|
 ====
 
 After login the hub sends the addresses of all other users that have one in one command, each entry ends with *$$*, like the *$UserIP* list:
 
 ====
- $FDCX peter tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q$$john tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 SHA256/S3MWGLZWGVSMYMBSKIKATTZCVBJPEAZO5QEZ5VMWPQGQADHMMB5A$$|
+ $FDCX peter fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q SHA256/AJVNTMKKORJ3OSENVIGGVS6CLCYVA32SYRA4PRDFI5GBUVSDST7Q$$john fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q SHA256/S3MWGLZWGVSMYMBSKIKATTZCVBJPEAZO5QEZ5VMWPQGQADHMMB5A$$|
 ====
 
 A client accepts both forms from the hub, one user with or without *$$* at the end, and a list.
@@ -2421,7 +2421,7 @@ It sends its address after login, and again to every user with this flag when it
 Nothing after the command name means the hub has no address any more, a hub without an address sends nothing at login:
 
 ====
- $FDCXH tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 5|
+ $FDCXH fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q 5|
  $FDCXH |
 ====
 
@@ -2448,7 +2448,7 @@ A client states the flag there only when it shares an address, on connections th
 When both clients state the flag and the connection uses TLS, each client sends its address after *$Key*, without keyprint, its certificate on that connection shows it, also on connections for files:
 
 ====
- $FDCX tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6|
+ $FDCX fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q|
 ====
 
 The address is sent only once per connection, never empty, and never over a connection without TLS.
@@ -2482,7 +2482,7 @@ After that both run the usual client to client handshake, the client that checks
 TLS ends at the relay, so there each client also sends its own client certificate and a signature, both in base64 on one line:
 
 ====
- $FDCX tfdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqauj7l6 MIIDBjCCAe6gAwIBAgIB... kq3ZpG8x...|
+ $FDCX fdcx1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq98qp4q MIIDBjCCAe6gAwIBAgIB... kq3ZpG8x...|
 ====
 
 The certificate is the DER form of the certificate the client uses for TLS on direct connections.
