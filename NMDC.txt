@@ -2351,7 +2351,7 @@ The hub answers with the address it sees, tries to connect to both TCP ports, se
  $PortTest 414 udp 0123456789abcdef0123456789abcdef|
 ====
 
-The UDP packet contains the same token, so the client itself sees if it arrived:
+The UDP packet contains the same token, so the client itself sees if it arrived. The hub sends it three times, half a second apart, before it tells the result, so one short loss on the way does not fail the test; packets can arrive before the answer of the hub, the client keeps their tokens for a few seconds:
 
 ====
  $PortTest 0123456789abcdef0123456789abcdef|
